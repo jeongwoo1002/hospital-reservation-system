@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header(글조회)">
+</head>
+<body>
+<div th:replace="fragments/common :: menu('board')"></div>
+
+<div class="container">
+  <h3 class="text-center">글 상세보기</h3>
+  <form th:object="${board}">
+    <div>
+      글번호: <span id="id"><i th:text="${board.id}"></i></span><br>
+      작성자: <span><i th:text="${board.user.username}"></i></span>
+    </div>
+    <br>
+
+    <div class="mb-3">
+      <label th:for="title" class="form-label">제목</label>
+      <input type="text" class="form-control" th:field="*{title}" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label th:for="content" class="form-label">내용</label>
+      <textarea class="form-control" th:field="*{content}" rows="10" readonly></textarea>
+    </div>
+  </form>
+
+  <div class="text-right">
+    <button type="button" class="btn btn-primary" th:onclick="history.back()">목록</button>
+    <span th:if="${#authentication.principal.username == board.user.username}">
+      <a type="button" class="btn btn-warning" th:href="@{/board/update/{id}(id=${board.id})}">수정</a>
+      <button type="button" class="btn btn-danger" id="btn-delete">삭제</button>
+    </span>
+  </div>
+  <br>
+
+  <div class="card">
+    <form>
+      <input type="hidden" id="userId" th:value="${#authentication.principal.user.id}">
+      <input type="hidden" id="boardId" th:value="${board.id}">
+      <div class="card-body">
+        <textarea id="reply-content" class="form-control" rows="5"></textarea>
+      </div>
+      <div class="card-footer">
+        <button type="button" id="btn-reply-save" class="btn btn-primary">등록</button>
+      </div>
+    </form>
+  </div>  <!--card-->
+  <br>
+
+  <div class="card">
+    <div class="card-header">댓글 리스트</div>
+    <ul id="reply-box" class="list-group">
+      <li th:id="${reply.id}" class="list-group-item d-flex justify-content-between" th:each="reply : ${board.reply}">
+        <div th:text="${reply.content}">댓글 내용</div>
+        <div class="d-flex">
+          작성자: &nbsp;<div class="font-italic" th:text="${reply.user.username}"></div>
+          &nbsp;<button class="badge" type="button" onclick="index.replyDelete(${board.id}, ${reply.id})"
+                        th:if="${#authentication.principal.username == reply.user.username}">
+          삭제
+        </button>
+        </div>
+      </li>
+    </ul> <!-- reply--box-->
+  </div>  <!--card-->
+
+</div> <!--container-->
+<script src="/js/board.js"></script>
+</body>
+</html>

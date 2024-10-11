@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header('회원 정보')">
+</head>
+<body>
+<div th:replace="fragments/common :: menu('home')"></div>
+
+<div class="container">
+    <h3>회원 정보</h3>
+    <div>
+        <p><strong>아이디:</strong> <span th:text="${user.username}"></span></p>
+        <p><strong>이름:</strong> <span th:text="${user.name}"></span></p>
+        <p><strong>전화번호:</strong> <span th:text="${#strings.replace(#strings.substring(user.number, 0, 3) + '-' + #strings.substring(user.number, 3, 7) + '-' + #strings.substring(user.number, 7, 11), '--', '-')}"></span></p>
+        <p><strong>주민번호:</strong> <span th:text="${#strings.substring(user.resident, 0, 6) + '-' + user.resident.substring(6, 7) + '******'}"></span></p>
+        <p><strong>주소:</strong> <span th:text="${user.address}"></span></p>
+        <a href="/user/updateForm" class="btn btn-primary">수정</a> <!-- 수정 버튼은 그대로 유지 -->
+    </div>
+</div>
+<div th:if="${message}" class="alert alert-success">
+    <p th:text="${message}"></p>
+</div>
+<div th:if="${error}" class="alert alert-danger">
+    <p th:text="${error}"></p>
+</div>
+<script th:src="@{/js/user.js}"></script>
+</body>
+</html>

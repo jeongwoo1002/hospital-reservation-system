@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header('회원 수정')">
+</head>
+<body>
+<div th:replace="fragments/common :: menu('home')"></div>
+
+<div class="container">
+  <h3>회원 수정</h3>
+  <form id="update-form" th:action="@{/user/update}" method="post">
+    <input type="hidden" th:value="${user.id}" name="id" id="id"/>
+
+    <label for="password">비밀번호
+      <input type="password" name="password" id="password" placeholder="비밀번호" required>
+    </label>
+
+    <label for="name">이름
+      <input type="text" name="name" id="name" placeholder="이름" th:value="${user.name}" required>
+    </label>
+
+    <label for="number">전화번호
+      <input type="text" name="number" id="number" placeholder="전화번호" th:value="${user.number}" required>
+    </label>
+
+    <label for="resident">주민번호
+      <input type="text" name="resident" id="resident" placeholder="주민번호" th:value="${user.resident}" required>
+    </label>
+
+    <label for="address">주소
+      <input type="text" name="address" id="address" placeholder="주소" th:value="${user.address}" required>
+    </label>
+
+    <button id="btn-update" type="submit">회원수정</button>
+  </form>
+</div>
+<script th:src="@{/js/user.js}"></script>
+</body>
+</html>

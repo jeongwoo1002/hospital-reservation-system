@@ -1,0 +1,126 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head th:replace="fragments/common :: header('예약 목록')">-->
+<!--    <title>예약 목록</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div th:replace="fragments/common :: menu('home')"></div>-->
+
+<!--<div class="container">-->
+<!--    <h3>예약 목록</h3>-->
+<!--    <table class="table table-striped">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>환자 이름</th>-->
+<!--            <th>병원</th>-->
+<!--            <th>연락처</th>-->
+<!--            <th>예약 시간</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="reservation : ${reservations}">-->
+<!--            <td th:text="${reservation.patientName}"></td>-->
+<!--            <td th:text="${reservation.ophthalmology.name}"></td>-->
+<!--            <td th:text="${reservation.contactNumber}"></td>-->
+<!--            <td th:text="${#dates.format(reservation.reservationTime, 'yyyy-MM-dd HH:mm')}"></td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--    <a th:href="@{/}" class="btn btn-primary">홈</a>-->
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header('예약 목록')">
+    <title>예약 목록</title>
+</head>
+<body>
+<div th:replace="fragments/common :: menu('home')"></div>
+
+<div class="container">
+    <h3>예약 목록</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>환자 이름</th>
+            <th>병원</th>
+            <th>연락처</th>
+            <th>예약 시간</th>
+            <th>상세보기</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="reservation : ${reservations}">
+            <td th:text="${reservation.patientName}"></td>
+            <td th:text="${reservation.ophthalmology.name}"></td>
+            <td th:text="${reservation.contactNumber}"></td>
+            <td th:text="${#dates.format(reservation.reservationTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td><a th:href="@{/reservation/detail/{id}(id=${reservation.id})}">상세보기</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/}" class="btn btn-primary">홈</a>
+</div>
+
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="ko">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title th:text="#{page.reservation.list}">예약 목록</title>-->
+<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <h2 th:text="#{label.reservation}">예약 목록</h2>-->
+<!--    <table class="table">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th th:text="#{label.reservation.id}">예약 ID</th>-->
+<!--            <th th:text="#{label.reservation.date}">예약 날짜</th>-->
+<!--            <th th:text="#{label.reservation.time}">예약 시간</th>-->
+<!--            <th th:text="#{label.reservation.ophthalmology}">병원</th>-->
+<!--            <th th:text="#{label.reservation.details}">상세</th>-->
+<!--            <th th:text="#{label.reservation.edit}">수정</th>-->
+<!--            <th th:text="#{label.reservation.delete}">삭제</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="reservation : ${reservations}">-->
+<!--            <td th:text="${reservation.id}"></td>-->
+<!--            <td th:text="${#dates.format(reservation.reservationDate, 'yyyy-MM-dd')}"></td>-->
+<!--            <td th:text="${#dates.format(reservation.reservationTime, 'HH:mm')}"></td>-->
+<!--            <td th:text="${reservation.ophthalmology.name}"></td>-->
+<!--            <td><a th:href="@{/reservation/detail/{id}(id=${reservation.id})}" class="btn btn-info" th:text="#{button.details}">상세보기</a></td>-->
+<!--            <td><a th:href="@{/reservation/edit/{id}(id=${reservation.id})}" class="btn btn-warning" th:text="#{button.edit}">수정하기</a></td>-->
+<!--            <td>-->
+<!--                <form th:action="@{/reservation/delete/{id}(id=${reservation.id})}" method="post">-->
+<!--                    <button type="submit" class="btn btn-danger" th:text="#{button.delete}">삭제하기</button>-->
+<!--                </form>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--    <a href="/reservation/form" class="btn btn-success" th:text="#{button.reserve}">예약하기</a>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Bootstrap JS &ndash;&gt;-->
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"-->
+<!--        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"-->
+<!--        integrity="sha384-Rx3GXqemqVi4gG0yrg0IuJvj0wzLJ7JyXmOskFZVbMOTp0J9mg4UqmsrkE9qlJvY"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"-->
+<!--        integrity="sha384-pzjw8f+21s62NAk9cmf3VmAK20j2CdcCWFpEAaDEgM2oXa/S5Bh8f+JcXn/tWtww"-->
+<!--        crossorigin="anonymous"></script>-->
+
+<!--</body>-->
+<!--</html>-->

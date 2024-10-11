@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+  <h3 class="text-center my-5">회원가입</h3>
+
+  <!-- 사용자와 병원 관리자를 선택할 수 있는 버튼 -->
+  <div class="d-flex justify-content-center">
+    <a class="btn btn-primary mx-2" th:href="@{/templates/user/joinForm}">사용자 회원가입</a>
+    <a class="btn btn-secondary mx-2" th:href="@{/templates/hospitalUser/joinForm}">병원 관리자 회원가입</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

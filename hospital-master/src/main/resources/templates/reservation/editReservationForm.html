@@ -1,0 +1,210 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <title>예약 수정</title>-->
+<!--  &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+<!--  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"-->
+<!--        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">-->
+<!--  &lt;!&ndash; Custom CSS &ndash;&gt;-->
+<!--  <style>-->
+<!--    /* Custom styles */-->
+<!--    .container {-->
+<!--      margin-top: 50px;-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<div class="container">-->
+<!--  <h3 class="mb-4">예약 수정</h3>-->
+<!--  <form th:action="@{/reservation/edit/{id}(id=${reservationForm.id})}" th:object="${reservationForm}"-->
+<!--        method="post">-->
+
+<!--    <input type="hidden" th:field="*{id}"/>-->
+
+<!--    <div class="form-group row">-->
+<!--      <label for="reservationDate" class="col-sm-2 col-form-label">예약 날짜:</label>-->
+<!--      <div class="col-sm-10">-->
+<!--        <input type="date" id="reservationDate" th:field="*{reservationDate}" class="form-control"-->
+<!--               required/>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="form-group row">-->
+<!--      <label for="reservationTime" class="col-sm-2 col-form-label">예약 시간:</label>-->
+<!--      <div class="col-sm-10">-->
+<!--        <input type="time" id="reservationTime" th:field="*{reservationTime}" class="form-control"-->
+<!--               required/>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="form-group row">-->
+<!--      <div class="col-sm-10 offset-sm-2">-->
+<!--        <button type="submit" class="btn btn-primary">수정하기</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </form>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Bootstrap JS &ndash;&gt;-->
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"-->
+<!--        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"-->
+<!--        integrity="sha384-Rx3GXqemqVi4gG0yrg0IuJvj0wzLJ7JyXmOskFZVbMOTp0J9mg4UqmsrkE9qlJvY"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"-->
+<!--        integrity="sha384-pzjw8f+21s62NAk9cmf3VmAK20j2CdcCWFpEAaDEgM2oXa/S5Bh8f+JcXn/tWtww"-->
+<!--        crossorigin="anonymous"></script>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>예약 수정</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <!-- Custom CSS -->
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h3 class="mb-4">예약 수정</h3>
+  <form th:action="@{/reservation/edit/{id}(id=${reservationForm.id})}" th:object="${reservationForm}"
+        method="post">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="form-group row">
+      <label for="reservationDate" class="col-sm-2 col-form-label">예약 날짜:</label>
+      <div class="col-sm-10">
+        <input type="date" id="reservationDate" th:field="*{reservationDate}" class="form-control"
+               required/>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="reservationTime" class="col-sm-2 col-form-label">예약 시간:</label>
+      <div class="col-sm-10">
+        <input type="time" id="reservationTime" th:field="*{reservationTime}" class="form-control"
+               required/>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="ophthalmology" class="col-sm-2 col-form-label">안과:</label>
+      <div class="col-sm-10">
+        <select th:field="*{ophthalmologyId}" id="ophthalmology" class="form-control">
+          <option th:each="ophthalmology : ${ophthalmologies}"
+                  th:value="${ophthalmology.id}" th:text="${ophthalmology.name}">안과</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-sm-10 offset-sm-2">
+        <button type="submit" class="btn btn-primary">수정하기</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
+        integrity="sha384-Rx3GXqemqVi4gG0yrg0IuJvj0wzLJ7JyXmOskFZVbMOTp0J9mg4UqmsrkE9qlJvY"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-pzjw8f+21s62NAk9cmf3VmAK20j2CdcCWFpEAaDEgM2oXa/S5Bh8f+JcXn/tWtww"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <title th:text="#{page.reservation.edit}">예약 수정</title> &lt;!&ndash; 수정 &ndash;&gt;-->
+<!--  &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+<!--  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"-->
+<!--        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">-->
+<!--  &lt;!&ndash; Custom CSS &ndash;&gt;-->
+<!--  <style>-->
+<!--    .container {-->
+<!--      margin-top: 50px;-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<div class="container">-->
+<!--  <h3 class="mb-4" th:text="#{page.reservation.edit}">예약 수정</h3> &lt;!&ndash; 수정 &ndash;&gt;-->
+<!--  <form th:action="@{/reservation/edit/{id}(id=${reservationForm.id})}" th:object="${reservationForm}"-->
+<!--        method="post">-->
+
+<!--    <input type="hidden" th:field="*{id}"/>-->
+
+<!--    <div class="form-group row">-->
+<!--      <label for="reservationDate" class="col-sm-2 col-form-label">예약 날짜:</label>-->
+<!--      <div class="col-sm-10">-->
+<!--        <input type="date" id="reservationDate" th:field="*{reservationDate}" class="form-control"-->
+<!--               required/>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="form-group row">-->
+<!--      <label for="reservationTime" class="col-sm-2 col-form-label">예약 시간:</label>-->
+<!--      <div class="col-sm-10">-->
+<!--        <input type="time" id="reservationTime" th:field="*{reservationTime}" class="form-control"-->
+<!--               required/>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="form-group row">-->
+<!--      <label for="ophthalmology" class="col-sm-2 col-form-label">안과:</label>-->
+<!--      <div class="col-sm-10">-->
+<!--        <select th:field="*{ophthalmologyId}" id="ophthalmology" class="form-control">-->
+<!--          <option th:each="ophthalmology : ${ophthalmologies}"-->
+<!--                  th:value="${ophthalmology.id}" th:text="${ophthalmology.name}">안과</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="form-group row">-->
+<!--      <div class="col-sm-10 offset-sm-2">-->
+<!--        <button type="submit" class="btn btn-primary">수정하기</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </form>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Bootstrap JS &ndash;&gt;-->
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"-->
+<!--        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"-->
+<!--        integrity="sha384-Rx3GXqemqVi4gG0yrg0IuJvj0wzLJ7JyXmOskFZVbMOTp0J9mg4UqmsrkE9qlJvY"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"-->
+<!--        integrity="sha384-pzjw8f+21s62NAk9cmf3VmAK20j2CdcCWFpEAaDEgM2oXa/S5Bh8f+JcXn/tWtww"-->
+<!--        crossorigin="anonymous"></script>-->
+
+<!--</body>-->
+<!--</html>-->

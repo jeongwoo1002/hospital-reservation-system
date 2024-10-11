@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header(안과병원목록)">
+</head>
+<body>
+<div th:replace="fragments/common :: menu('ophthalmology')"></div>
+
+<div class="container">
+  <a href="" th:href="@{/ophthalmology/list}"><h3 class="text-center">안과 병원 목록</h3></a>
+
+  <!-- 검색 폼 -->
+  <form th:action="@{/ophthalmology/list}" method="get" class="form-inline mb-3">
+    <input type="text" name="keyword" class="form-control mr-sm-2" placeholder="주소로 검색" th:value="${keyword}">
+    <button type="submit" class="btn btn-primary">검색</button>
+  </form>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>번호</th>
+      <th>이름</th>
+      <th>주소</th>
+      <th>전화번호</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ophthalmology, i : ${ophthalmologyPage.content}">
+      <td th:text="${i.index + 1 + (ophthalmologyPage.pageable.pageSize * ophthalmologyPage.pageable.pageNumber)}"></td>
+      <td><a th:text="${ophthalmology.name}" th:href="@{/ophthalmology/detail/{id}(id=${ophthalmology.id})}"></a></td>
+      <td th:text="${ophthalmology.address}"></td>
+      <td th:text="${ophthalmology.number}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 페이지 링크 -->
+  <ul class="pagination justify-content-center">
+    <!-- 처음 페이지 -->
+    <li class="page-item" th:if="${page.number > 10}">
+      <a class="page-link" th:href="@{${'/ophthalmology/list?page=0'}}">&lt;&lt;</a>
+    </li>
+    <!-- 이전 페이지 -->
+    <li class="page-item" th:if="${page.number > 0}">
+      <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + (page.number - 1)}}">&lt;</a>
+    </li>
+    <!-- 페이지 번호 -->
+    <li class="page-item" th:each="i : ${#numbers.sequence(page.number / 10 * 10, (page.number / 10 * 10) + 9)}" th:if="${i <= page.totalPages}">
+      <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + i}}" th:text="${i + 1}"></a>
+    </li>
+    <!-- 다음 페이지 -->
+    <li class="page-item" th:if="${page.number + 10 < page.totalPages}">
+      <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + (page.number + 10)}}">&gt;</a>
+    </li>
+    <!-- 마지막 페이지 -->
+    <li class="page-item" th:if="${page.number + 10 < page.totalPages}">
+      <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + (page.totalPages - 1)}}">&gt;&gt;</a>
+    </li>
+  </ul>
+
+</div> <!--container  -->
+</body>
+</html>

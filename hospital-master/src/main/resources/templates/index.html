@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>접근성 테스트</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>접근성 테스트</h1>
+  <ul role="tablist" aria-label="탭 목록">
+    <li role="presentation">
+      <button role="tab" aria-selected="false" aria-controls="tab1" id="tab1-button">탭 1</button>
+    </li>
+    <li role="presentation">
+      <button role="tab" aria-selected="false" aria-controls="tab2" id="tab2-button">탭 2</button>
+    </li>
+    <li role="presentation">
+      <button role="tab" aria-selected="false" aria-controls="tab3" id="tab3-button">탭 3</button>
+    </li>
+  </ul>
+
+  <div role="tabpanel" id="tab1" aria-labelledby="tab1-button">
+    <p>탭 1 내용</p>
+  </div>
+  <div role="tabpanel" id="tab2" aria-labelledby="tab2-button" hidden>
+    <p>탭 2 내용</p>
+  </div>
+  <div role="tabpanel" id="tab3" aria-labelledby="tab3-button" hidden>
+    <p>탭 3 내용</p>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Custom JS -->
+<script src="path/to/your/custom-script.js"></script> <!-- 여기에 JavaScript 파일을 링크합니다. -->
+
+</body>
+</html>

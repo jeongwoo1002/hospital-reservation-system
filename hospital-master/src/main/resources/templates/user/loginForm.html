@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header(로그인)">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/css/loginForm.css}">
+  <title>로그인</title>
+</head>
+<div th:replace="fragments/common :: menu('home')"></div>
+
+<body class="text-center">
+
+<div class="container">
+<form class="form-signin" th:action="@{/auth/loginProc}" method="post">
+<!--  <img class="mb-4" src="https://getbootstrap.com/docs/4.6/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">-->
+<div th:if="${param.error}" class="alert alert-danger" role="alert">
+아이디 또는 비밀번호가 일치하지 않습니다.
+</div>
+<div th:if="${param.logout}" class="alert alert-primary" role="alert">
+로그아웃
+</div>
+  <label for="username" class="sr-only">아이디</label>
+  <input type="text" id="username" name="username" class="form-control" placeholder="아이디" required autofocus>
+  <label for="password" class="sr-only">비밀번호</label>
+  <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" required>
+
+  <button id="btn-login" class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+
+  <!-- 구글 로그인 버튼 추가 -->
+  <a th:href="@{/login/google}" class="btn btn-lg btn-google btn-block" role="button">Google 로그인</a>
+</form>
+  <p class="mt-5 mb-3 text-muted">&copy; HOSPIT 🇰🇷</p>
+</div>
+<script th:src="@{/js/user.js}"></script>
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head th:replace="fragments/common :: header(로그인)">-->
+<!--  <meta charset="UTF-8">-->
+<!--  <link rel="stylesheet" th:href="@{/css/loginForm.css}">-->
+<!--  <title>로그인</title>-->
+<!--</head>-->
+<!--<body class="text-center">-->
+<!--<div th:replace="fragments/common :: menu('home')"></div>-->
+
+<!--<div class="container">-->
+<!--  <form class="form-signin" th:action="@{/auth/loginProc}" th:object="${loginForm}" method="post">-->
+<!--    <div th:if="${param.error}" class="alert alert-danger" role="alert">-->
+<!--      <span th:text="#{error.login}">아이디 또는 비밀번호가 일치하지 않습니다.</span>-->
+<!--    </div>-->
+<!--    <div th:if="${param.logout}" class="alert alert-primary" role="alert">-->
+<!--      <span th:text="#{message.logout}">로그아웃</span>-->
+<!--    </div>-->
+
+<!--    <label for="username" class="col-form-label" th:text="#{label.user.loginId}">아이디:</label>-->
+<!--    <input type="text" id="username" th:field="*{username}" class="form-control" required/>-->
+
+<!--    <label for="password" class="col-form-label" th:text="#{label.user.password}">비밀번호:</label>-->
+<!--    <input type="password" id="password" th:field="*{password}" class="form-control" required/>-->
+
+<!--    <button id="btn-login" class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{button.save}">로그인</button>-->
+
+<!--    <a th:href="@{/login/google}" class="btn btn-lg btn-google btn-block" role="button">Google 로그인</a>-->
+<!--  </form>-->
+<!--  <p class="mt-5 mb-3 text-muted">&copy; HOSPIT 🇰🇷</p>-->
+<!--</div>-->
+<!--<script th:src="@{/js/user.js}"></script>-->
+<!--</body>-->
+<!--</html>-->

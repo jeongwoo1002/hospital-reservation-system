@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4453afcce1789bff6ccf42df87bacdab"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+
+                    var mapContainer = document.getElementById('map');
+                    var mapOption = {
+                        center: new kakao.maps.LatLng(lat, lng),
+                        level: 3
+                    };
+
+                    var map = new kakao.maps.Map(mapContainer, mapOption);
+                    var markerPosition = new kakao.maps.LatLng(lat, lng);
+                    var marker = new kakao.maps.Marker({
+                        position: markerPosition
+                    });
+                    marker.setMap(map);
+
+                    window.location.href = `/?lat=${lat}&lng=${lng}`;
+                });
+            } else {
+                alert("Geolocation을 사용할 수 없습니다.");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            getLocation();
+
+            // 추가된 JavaScript 코드
+            const synth = window.speechSynthesis;
+            const tabs = document.querySelectorAll('[role="tab"]');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('keydown', function(event) {
+                    console.log(`Key pressed: ${event.key}`);
+
+                    if (event.key === 'Tab') {
+                        event.preventDefault();
+                        const index = Array.from(tabs).indexOf(tab);
+                        let nextTab;
+                        if (event.shiftKey) {
+                            nextTab = tabs[index - 1] || tabs[tabs.length - 1];
+                        } else {
+                            nextTab = tabs[index + 1] || tabs[0];
+                        }
+                        nextTab.focus();
+                    }
+
+                    if (event.key === 'a') {
+                        event.preventDefault();
+                        console.log('A key pressed');
+                        const textToRead = tab.textContent.trim();
+                        const utterance = new SpeechSynthesisUtterance(textToRead);
+                        synth.speak(utterance);
+                    }
+
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        tab.click();
+                    }
+                });
+            });
+
+            tabs[0].setAttribute('aria-selected', 'true');
+        });
+    </script>
+</head>
+<body>
+<div th:replace="fragments/common :: header('홈')"></div>
+<div th:replace="fragments/common :: menu('home')"></div>
+
+<div class="container">
+    <h3 class="text-center">안과 병원 목록</h3>
+
+    <form action="/" method="get" class="form-inline mb-3">
+        <input type="text" name="keyword" class="form-control mr-sm-2" placeholder="주소로 검색" th:value="${keyword}">
+        <button type="submit" class="btn btn-primary">검색</button>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>이름</th>
+            <th>주소</th>
+            <th>전화번호</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ophthalmology, i : ${ophthalmologyPage.content}">
+            <td th:text="${i.index + 1 + (ophthalmologyPage.pageable.pageSize * ophthalmologyPage.pageable.pageNumber)}"></td>
+            <td><a role="tab" tabindex="0" th:text="${ophthalmology.name}" th:href="@{/ophthalmology/detail/{id}(id=${ophthalmology.id})}"></a></td>
+            <td th:text="${ophthalmology.address}"></td>
+            <td th:text="${ophthalmology.number}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:if="${ophthalmologyPage.pageable.pageNumber > 10}">
+            <a class="page-link" th:href="@{${'/ophthalmology/list?page=0'}}">&lt;&lt;</a>
+        </li>
+        <li class="page-item" th:if="${ophthalmologyPage.pageable.pageNumber > 0}">
+            <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + (ophthalmologyPage.pageable.pageNumber - 1)}}">&lt;</a>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(ophthalmologyPage.pageable.pageNumber / 10 * 10, (ophthalmologyPage.pageable.pageNumber / 10 * 10) + 9)}" th:if="${i < ophthalmologyPage.totalPages}">
+            <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + i}}" th:text="${i + 1}"></a>
+        </li>
+        <li class="page-item" th:if="${ophthalmologyPage.pageable.pageNumber + 10 < ophthalmologyPage.totalPages}">
+            <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + (ophthalmologyPage.pageable.pageNumber + 10)}}">&gt;</a>
+        </li>
+        <li class="page-item" th:if="${ophthalmologyPage.pageable.pageNumber + 10 < ophthalmologyPage.totalPages}">
+            <a class="page-link" th:href="@{${'/ophthalmology/list?page=' + (ophthalmologyPage.totalPages - 1)}}">&gt;&gt;</a>
+        </li>
+    </ul>
+</div> <!--container  -->
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header(병원상세정보)">
+</head>
+<body>
+<div th:replace="fragments/common :: menu('hospital')"></div>
+
+<div class="container">
+  <h3 class="text-center">병원 상세 정보</h3>
+  <form th:object="${hospital}">
+    <div>
+      번호: <span id="id"><i th:text="${hospital.id}"></i></span><br>
+    </div>
+    <br>
+
+    <div class="mb-3">
+      <label th:for="name" class="form-label">이름</label>
+      <input type="text" class="form-control" th:field="*{name}" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label th:for="address" class="form-label">주소</label>
+      <input type="text" class="form-control" th:field="*{address}" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label th:for="number" class="form-label">전화번호</label>
+      <input type="text" class="form-control" th:field="*{number}" readonly>
+    </div>
+  </form>
+
+  <div class="text-right">
+    <a type="button" class="btn btn-primary" th:href="@{/hospital/list}">목록</a>
+    <a type="button" class="btn btn-primary" th:href="@{/hospital/reservation}">예약하기</a>
+  </div>
+</div> <!--container-->
+
+<script th:src="@{/js/hospital.js}"></script>
+</body>
+</html>

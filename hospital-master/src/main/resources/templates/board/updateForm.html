@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: header(글수정)">
+</head>
+<body>
+<div th:replace="fragments/common :: menu('board')"></div>
+
+<div class="container">
+    <h3 class="text-center">글수정</h3>
+    <form th:object="${board}">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="mb-3">
+            <label th:for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" th:field="*{title}">
+        </div>
+
+        <div class="mb-3">
+            <label th:for="content" class="form-label">내용</label>
+            <textarea class="form-control" th:field="*{content}" rows="10"></textarea>
+        </div>
+    </form>
+
+        <div class="text-right">
+            <a type="button" class="btn btn-danger" th:href="@{/board/detail/{id}(id=${id})}">취소</a>
+            <button type="button"  id="btn-update" class="btn btn-warning">수정</button>
+        </div>
+</div>
+<script th:src="@{/js/board.js}"></script>
+
+</body>
+</html>

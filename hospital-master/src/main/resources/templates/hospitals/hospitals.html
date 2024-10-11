@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.hospitals}">병원 목록</h2>
+    </div>
+
+    <hr class="my-4">
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th th:text="#{label.hospital.id}">병원 ID</th>
+                <th th:text="#{label.hospital.hospitalName}">병원이름</th>
+                <th th:text="#{label.hospital.hospitalAddress}">주소</th>
+                <th th:text="#{label.hospital.hospitalHours}">진료시간</th>
+                <td th:text="#{label.hospital.hospitalNumber}">병원 전화번호</td>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="hospital : ${hospitals}">
+                <td><a href="hospital.html" th:href="@{/hospitals/{hospitalId}(hospitalId=${hospital.id})}" th:text="${hospital.id}">병원id</a></td>
+                <td><a href="hospital.html" th:href="@{|/hospitals/${hospital.id}|}" th:text="${hospital.hospitalName}">병원이름</a></td>
+                <td th:text="${hospital.hospitalAddress}">서울노원구</td>
+                <td th:text="${hospital.hospitalHours}">9~18</td>
+                <td th:text="${hospital.hospitalNumber}">02-1234-5678</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div> <!-- /container -->
+
+</body>
+</html>
