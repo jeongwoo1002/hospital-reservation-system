@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -71,8 +72,9 @@ public class OphthalmologyController {
         Reservation reservation = new Reservation();
         reservation.setOphthalmology(ophthalmology);
         model.addAttribute("reservation", reservation);
-        return "reservation/reservationForm";
+        return "reservation/reservationForm"; // reservation/reservationForm.html 경로가 맞는지 확인
     }
+
 
 
     @PostMapping("/reservation/new")
@@ -86,8 +88,8 @@ public class OphthalmologyController {
     public String editReservationForm(@PathVariable Long id, Model model) {
         Reservation reservation = reservationService.getReservationById(id);
         ReservationForm reservationForm = new ReservationForm();
-        reservationForm.setPatientName(reservation.getPatientName());
-        reservationForm.setContactNumber(reservation.getContactNumber());
+        reservationForm.setId(reservation.getId());
+        reservationForm.setReservationDate(reservation.getReservationDate());
         reservationForm.setReservationTime(reservation.getReservationTime());
         reservationForm.setOphthalmologyId(reservation.getOphthalmology().getId());
         model.addAttribute("reservationForm", reservationForm);
@@ -103,18 +105,25 @@ public class OphthalmologyController {
     }
 
     @PostMapping("/reservation/delete/{id}")
-    public String deleteReservation(@PathVariable Long id) {
-        reservationService.deleteReservation(id);
+    public String deleteReservation(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByUsername(userDetails.getUsername()); // 사용자 정보 가져오기
+        reservationService.deleteReservation(id, user); // 사용자 정보를 함께 전달
         return "redirect:/user/reservations";
     }
+
 
     @GetMapping("/user/reservations")
     public String getUserReservations(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User user = userService.findByUsername(userDetails.getUsername());
         List<Reservation> reservations = reservationService.getReservationsByUser(user.getId());
+
+        // 로그 추가
+
         model.addAttribute("reservations", reservations);
-        return "user/userReservations";
+        return "reservation/userReservations"; // userReservations.html로 이동
     }
+
+
 //
 //    @GetMapping("/nearby")
 //    public List<Ophthalmology> getNearbyOphthalmology(@RequestParam double lat, @RequestParam double lng) {

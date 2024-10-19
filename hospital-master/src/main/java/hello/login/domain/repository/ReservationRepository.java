@@ -30,6 +30,7 @@
 //    List<LocalTime> findReservedTimesByOphthalmologyAndDate(@Param("ophthalmologyId") Long ophthalmologyId,
 //                                                            @Param("date") LocalDate date);
 //}
+
 package hello.login.domain.repository;
 
 import hello.login.domain.model.Reservation;

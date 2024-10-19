@@ -1,48 +1,7 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head th:replace="fragments/common :: header('나의 예약')">-->
-<!--  <title>나의 예약</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div th:replace="fragments/common :: menu('home')"></div>-->
-
-<!--<div class="container">-->
-<!--  <h3>나의 예약</h3>-->
-<!--  <table class="table table-striped">-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--      <th>병원</th>-->
-<!--      <th>환자 이름</th>-->
-<!--      <th>연락처</th>-->
-<!--      <th>예약 시간</th>-->
-<!--      <th>변경</th>-->
-<!--      <th>삭제</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    <tr th:each="reservation : ${reservations}">-->
-<!--      <td th:text="${reservation.ophthalmology != null ? reservation.ophthalmology.name : ''}"></td>-->
-<!--      <td th:text="${reservation.patientName}"></td>-->
-<!--      <td th:text="${reservation.contactNumber}"></td>-->
-<!--      <td th:text="${#dates.format(reservation.reservationTime, 'yyyy-MM-dd HH:mm')}"></td>-->
-<!--      <td>-->
-<!--        <a th:href="@{/reservation/edit/{id}(id=${reservation.id})}" class="btn btn-warning">변경</a>-->
-<!--      </td>-->
-<!--      <td>-->
-<!--        <form th:action="@{/reservation/delete/{id}(id=${reservation.id})}" method="post">-->
-<!--          <button type="submit" class="btn btn-danger">삭제</button>-->
-<!--        </form>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
-<!--  </table>-->
-<!--</div>-->
-
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/common :: header('나의 예약')">
+  <meta charset="UTF-8">
   <title>나의 예약</title>
 </head>
 <body>
@@ -56,74 +15,38 @@
       <th>병원</th>
       <th>환자 이름</th>
       <th>연락처</th>
-      <th>예약 시간</th>
+      <th>예약 날짜 및 시간</th>
       <th>변경</th>
       <th>삭제</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="reservation : ${reservations}">
-      <td th:text="${reservation.ophthalmology != null ? reservation.ophthalmology.name : ''}"></td>
-      <td th:text="${reservation.patientName}"></td>
-      <td th:text="${reservation.contactNumber}"></td>
-      <td th:text="${#dates.format(reservation.reservationDate, 'yyyy-MM-dd') + ' ' + #dates.format(reservation.reservationTime, 'HH:mm')}"></td>
-      <td>
-        <a th:href="@{/reservation/edit/{id}(id=${reservation.id})}" class="btn btn-warning">변경</a>
-      </td>
-      <td>
-        <form th:action="@{/reservation/delete/{id}(id=${reservation.id})}" method="post">
-          <button type="submit" class="btn btn-danger">삭제</button>
-        </form>
-      </td>
-    </tr>
+    <th:block th:if="${not #lists.isEmpty(reservations)}">
+      <tr th:each="reservation : ${reservations}">
+        <td th:text="${reservation.ophthalmology.name}">안과 이름</td>
+        <td th:text="${reservation.user.name}">환자 이름</td>
+        <td th:text="${reservation.user.number}">연락처</td>
+        <td th:text="${reservation.reservationDate} + ' ' + ${reservation.reservationTime}">예약 날짜 및 시간</td> <!-- 예약 날짜 및 시간 -->
+
+<!--        <td th:text="${reservation.reservationDate}">예약 날짜</td>-->
+<!--        <td th:text="${reservation.reservationTime}">예약 시간</td>-->
+<!--        <td><a th:href="@{/user/reservations/{id}(id=${reservation.id})}">상세보기</a></td>-->
+        <td><a th:href="@{/reservation/user/reservations/edit/{id}(id=${reservation.id})}">수정</a></td>
+        <td>
+          <form th:action="@{/user/reservations/delete/{id}(id=${reservation.id})}" method="post">
+            <input type="submit" value="삭제" onclick="return confirm('정말 삭제하시겠습니까?');"/>
+          </form>
+        </td>
+      </tr>
+    </th:block>
+    <th:block th:if="${#lists.isEmpty(reservations)}">
+      <tr>
+        <td colspan="6">예약이 없습니다.</td>
+      </tr>
+    </th:block>
     </tbody>
   </table>
 </div>
 
 </body>
 </html>
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="ko" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head th:replace="fragments/common :: header(나의예약)">-->
-<!--  <title th:text="#{page.myReservations}">나의 예약</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div th:replace="fragments/common :: menu('home')"></div>-->
-
-<!--<div class="container">-->
-<!--  <h3 th:text="#{page.myReservations}">나의 예약</h3>-->
-<!--  <table class="table table-striped">-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--      <th th:text="#{label.reservation.ophthalmology}">병원</th>-->
-<!--      <th th:text="#{label.reservation.patientName}">환자 이름</th>-->
-<!--      <th th:text="#{label.reservation.contactNumber}">연락처</th>-->
-<!--      <th th:text="#{label.reservation.date}">예약 날짜</th>-->
-<!--      <th th:text="#{label.reservation.time}">예약 시간</th>-->
-<!--      <th th:text="#{button.update}">변경</th>-->
-<!--      <th th:text="#{button.delete}">삭제</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    <tr th:each="reservation : ${reservations}">-->
-<!--      <td th:text="${reservation.ophthalmology != null ? reservation.ophthalmology.name : ''}"></td>-->
-<!--      <td th:text="${reservation.patientName}"></td>-->
-<!--      <td th:text="${reservation.contactNumber}"></td>-->
-<!--      <td th:text="${#dates.format(reservation.reservationDate, 'yyyy-MM-dd')}"></td>-->
-<!--      <td th:text="${#dates.format(reservation.reservationTime, 'HH:mm')}"></td>-->
-<!--      <td>-->
-<!--        <a th:href="@{/reservation/edit/{id}(id=${reservation.id})}" class="btn btn-warning" th:text="#{button.update}">변경</a>-->
-<!--      </td>-->
-<!--      <td>-->
-<!--        <form th:action="@{/reservation/delete/{id}(id=${reservation.id})}" method="post">-->
-<!--          <button type="submit" class="btn btn-danger" th:text="#{button.delete}">삭제</button>-->
-<!--        </form>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
-<!--  </table>-->
-<!--</div>-->
-<!--<script th:src="@{/js/user.js}"></script>-->
-<!--</body>-->
-<!--</html>-->

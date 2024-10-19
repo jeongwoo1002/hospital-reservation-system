@@ -36,4 +36,5 @@ public class OphthalmologyService {
         double radius = 10.0;
         return ophthalmologyRepository.findNearby(lat, lng, radius);
     }
+
 }

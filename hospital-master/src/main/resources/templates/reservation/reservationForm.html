@@ -7,6 +7,10 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <!-- jQuery와 jQuery UI 라이브러리 추가 -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <!-- Custom CSS -->
   <style>
     .container {
@@ -18,30 +22,42 @@
 
 <div class="container">
   <h3 class="mb-4">예약 생성</h3>
-  <form th:action="@{/reservation/create}" th:object="${reservationForm}" method="post" class="form-horizontal">
+  <form th:action="@{/reservations}" th:object="${reservationForm}" method="post" class="form-horizontal">
     <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{ophthalmologyId}" id="ophthalmologyId" />
 
     <div class="form-group">
-      <label for="ophthalmology" class="control-label col-sm-2">안과:</label>
+      <label class="control-label col-sm-2">환자 이름:</label>
       <div class="col-sm-10">
-        <select th:field="*{ophthalmologyId}" id="ophthalmology" class="form-control">
-          <option th:each="ophthalmology : ${ophthalmologies}"
-                  th:value="${ophthalmology.id}" th:text="${ophthalmology.name}">안과</option>
-        </select>
+        <input type="text" th:value="${patientName}" class="form-control" readonly />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2">연락처:</label>
+      <div class="col-sm-10">
+        <input type="text" th:value="${contactNumber}" class="form-control" readonly />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2">안과 병원:</label>
+      <div class="col-sm-10">
+        <input type="text" th:value="${ophthalmologyName}" class="form-control" readonly />
       </div>
     </div>
 
     <div class="form-group">
       <label for="reservationDate" class="control-label col-sm-2">예약 날짜:</label>
       <div class="col-sm-10">
-        <input type="date" th:field="*{reservationDate}" id="reservationDate" class="form-control" />
+        <input type="text" th:field="*{reservationDate}" id="reservationDate" class="form-control" required />
       </div>
     </div>
 
     <div class="form-group">
       <label for="reservationTime" class="control-label col-sm-2">예약 시간:</label>
       <div class="col-sm-10">
-        <select th:field="*{reservationTime}" id="reservationTime" class="form-control">
+        <select th:field="*{reservationTime}" id="reservationTime" class="form-control" required>
           <!-- 시간 옵션은 JavaScript로 동적으로 추가됩니다 -->
         </select>
       </div>
@@ -55,538 +71,46 @@
   </form>
 </div>
 
-<script th:inline="javascript">
+<script>
+  // jQuery UI Datepicker 적용
+  $(function() {
+    $("#reservationDate").datepicker({
+      dateFormat: "yy-mm-dd", // 날짜 형식
+      minDate: 0, // 오늘 이후 날짜만 선택 가능
+      beforeShowDay: function(date) {
+        var day = date.getDay();
+        // 주말 비활성화
+        return [day !== 0, ''];
+      }
+    });
+  });
+
+  // 예약 날짜 변경 시 해당 날짜의 가능한 시간을 서버에서 받아옴
   document.getElementById('reservationDate').addEventListener('change', function() {
-    var ophthalmologyId = document.getElementById('ophthalmology').value;
+    var ophthalmologyId = document.getElementById('ophthalmologyId').value; // hidden input에서 ID 가져오기
     var reservationDate = this.value;
+
     fetch('/reservation/available-times?ophthalmologyId=' + ophthalmologyId + '&date=' + reservationDate)
             .then(response => response.json())
             .then(times => {
               var timeSelect = document.getElementById('reservationTime');
-              timeSelect.innerHTML = '';
-              times.forEach(time => {
+              timeSelect.innerHTML = ''; // 기존 옵션 제거
+              if (times.length === 0) {
                 var option = document.createElement('option');
-                option.value = time;
-                option.textContent = time;
+                option.textContent = "선택 가능한 시간이 없습니다.";
                 timeSelect.appendChild(option);
-              });
+              } else {
+                times.forEach(time => {
+                  var option = document.createElement('option');
+                  option.value = time;
+                  option.textContent = time;
+                  timeSelect.appendChild(option);
+                });
+              }
             })
             .catch(error => console.error('Error fetching available times:', error));
   });
 </script>
 
 </body>
-
 </html>
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--  <meta charset="UTF-8">-->
-<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--  <title>예약 생성</title>-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">-->
-<!--  <style>-->
-<!--    .cell {-->
-<!--      background-color: #f8f9fa;-->
-<!--      border: 1px solid #dee2e6;-->
-<!--      border-radius: 5px;-->
-<!--      cursor: pointer;-->
-<!--      transition: background-color 0.3s ease;-->
-<!--    }-->
-
-<!--    .cell:hover {-->
-<!--      background-color: #e2e6ea;-->
-<!--    }-->
-
-<!--    .cell.selected {-->
-<!--      background-color: #007bff;-->
-<!--      color: white;-->
-<!--    }-->
-<!--  </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div class="container-fluid px-0 px-sm-4 mx-auto">-->
-<!--  <div class="row justify-content-center mx-0">-->
-<!--    <div class="col-lg-10">-->
-<!--      <div class="card border-0">-->
-<!--        <form autocomplete="off">-->
-<!--          <div class="card-header bg-dark text-white">-->
-<!--            <div class="mx-0 mb-0 row justify-content-sm-center justify-content-start px-1">-->
-<!--              <input type="text" id="dp1" class="datepicker" placeholder="날짜 선택" name="date" readonly><span class="fa fa-calendar"></span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="card-body p-3 p-sm-5">-->
-<!--            <div id="timeSlots" class="row text-center mx-0"></div>-->
-<!--          </div>-->
-<!--        </form>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--&lt;!&ndash; JS &ndash;&gt;-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>-->
-<!--<script>-->
-<!--  // Datepicker 초기화-->
-<!--  $(document).ready(function () {-->
-<!--    $('#dp1').datepicker({-->
-<!--      format: 'yyyy-mm-dd',-->
-<!--      autoclose: true,-->
-<!--      todayHighlight: true-->
-<!--    }).on('changeDate', function (e) {-->
-<!--      generateTimeSlots();-->
-<!--    });-->
-
-<!--    // 시간 슬롯 생성-->
-<!--    function generateTimeSlots() {-->
-<!--      const timeSlotsContainer = $('#timeSlots');-->
-<!--      timeSlotsContainer.empty(); // 기존 시간 슬롯 초기화-->
-
-<!--      const startTime = 9; // 09:00 AM-->
-<!--      const endTime = 18; // 06:00 PM-->
-<!--      const interval = 15; // 15분 간격-->
-<!--      const lunchStart = 13 * 60; // 13:00 in minutes-->
-<!--      const lunchEnd = 14 * 60; // 14:00 in minutes-->
-
-<!--      for (let hour = startTime; hour < endTime; hour++) {-->
-<!--        for (let minute = 0; minute < 60; minute += interval) {-->
-<!--          const totalMinutes = hour * 60 + minute;-->
-<!--          if (totalMinutes >= lunchStart && totalMinutes < lunchEnd) {-->
-<!--            continue; // 점심시간 건너뛰기-->
-<!--          }-->
-
-<!--          const timeString = formatTime(hour, minute);-->
-<!--          timeSlotsContainer.append(`-->
-<!--              <div class="col-md-2 col-4 my-1 px-2">-->
-<!--                <div class="cell py-1">${timeString}</div>-->
-<!--              </div>-->
-<!--            `);-->
-<!--        }-->
-<!--      }-->
-
-<!--      // 클릭 이벤트로 시간 선택 가능하게-->
-<!--      $('.cell').on('click', function () {-->
-<!--        $('.cell').removeClass('selected');-->
-<!--        $(this).addClass('selected');-->
-<!--      });-->
-<!--    }-->
-
-<!--    function formatTime(hour, minute) {-->
-<!--      let period = hour >= 12 ? 'PM' : 'AM';-->
-<!--      let displayHour = hour % 12 || 12;-->
-<!--      let displayMinute = minute < 10 ? '0' + minute : minute;-->
-<!--      return `${displayHour}:${displayMinute}${period}`;-->
-<!--    }-->
-<!--  });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
-
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="ko" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--  <meta charset="UTF-8">-->
-<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--  <title>예약 생성</title>-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">-->
-<!--  <style>-->
-<!--    .cell {-->
-<!--      background-color: #f8f9fa;-->
-<!--      border: 1px solid #dee2e6;-->
-<!--      border-radius: 5px;-->
-<!--      cursor: pointer;-->
-<!--      transition: background-color 0.3s ease;-->
-<!--    }-->
-
-<!--    .cell:hover {-->
-<!--      background-color: #e2e6ea;-->
-<!--    }-->
-
-<!--    .cell.selected {-->
-<!--      background-color: #007bff;-->
-<!--      color: white;-->
-<!--    }-->
-<!--  </style>-->
-<!--  <head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title th:text="#{page.reservation.create}">예약 생성</title>-->
-<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
-<!--    <link rel="stylesheet" href="/css/reservationForm.css">-->
-<!--  </head>-->
-<!--<body>-->
-<!--<div class="container">-->
-<!--  <h3 class="mt-4" th:text="#{page.reservation.create}">예약 생성</h3>-->
-<!--  <form th:action="@{/reservation/save}" method="post">-->
-<!--    <div class="mb-3">-->
-<!--      <label for="reservationDate" class="form-label" th:text="#{label.reservation.date}">예약 날짜:</label>-->
-<!--      <input type="date" class="form-control" id="reservationDate" name="date" required>-->
-<!--    </div>-->
-<!--    <div class="mb-3">-->
-<!--      <label for="reservationTime" class="form-label" th:text="#{label.reservation.time}">예약 시간:</label>-->
-<!--      <input type="time" class="form-control" id="reservationTime" name="time" required>-->
-<!--    </div>-->
-<!--    <div class="mb-3">-->
-<!--      <label for="ophthalmology" class="form-label" th:text="#{label.reservation.ophthalmology}">병원:</label>-->
-<!--      <select class="form-select" id="ophthalmology" name="ophthalmology" required>-->
-<!--        &lt;!&ndash; 병원 목록이 동적으로 생성됩니다. &ndash;&gt;-->
-<!--      </select>-->
-<!--    </div>-->
-<!--    <button type="submit" class="btn btn-primary" th:text="#{button.reserve}">예약하기</button>-->
-<!--    <a href="/reservation/list" class="btn btn-secondary" th:text="#{button.cancel}">취소</a>-->
-<!--  </form>-->
-<!--</div>-->
-<!--&lt;!&ndash; JS &ndash;&gt;-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>-->
-<!--<script>-->
-<!--  $(document).ready(function () {-->
-<!--    // 오늘 날짜 이후만 선택 가능하게 설정-->
-<!--    const today = new Date();-->
-<!--    $('#dp1').datepicker({-->
-<!--      format: 'yyyy-mm-dd',-->
-<!--      autoclose: true,-->
-<!--      todayHighlight: true,-->
-<!--      startDate: today // 오늘 이후 날짜만 선택 가능-->
-<!--    }).on('changeDate', function (e) {-->
-<!--      generateTimeSlots();-->
-<!--    });-->
-
-<!--    // 시간 슬롯 생성 함수-->
-<!--    function generateTimeSlots() {-->
-<!--      const timeSlotsContainer = $('#timeSlots');-->
-<!--      timeSlotsContainer.empty(); // 기존 슬롯 초기화-->
-
-<!--      const startTime = 9; // 09:00-->
-<!--      const endTime = 18; // 18:00-->
-<!--      const interval = 15; // 15분 간격-->
-<!--      const lunchStart = 13 * 60; // 점심 시작 13:00-->
-<!--      const lunchEnd = 14 * 60; // 점심 끝 14:00-->
-
-<!--      const selectedDate = new Date($('#dp1').datepicker('getDate'));-->
-<!--      const currentDate = new Date();-->
-<!--      const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes(); // 현재 시각(분 단위)-->
-
-<!--      for (let hour = startTime; hour < endTime; hour++) {-->
-<!--        for (let minute = 0; minute < 60; minute += interval) {-->
-<!--          const totalMinutes = hour * 60 + minute;-->
-
-<!--          // 점심 시간 제외-->
-<!--          if (totalMinutes >= lunchStart && totalMinutes < lunchEnd) {-->
-<!--            continue;-->
-<!--          }-->
-
-<!--          // 오늘 선택 시, 현재 시간 이전 슬롯은 비활성화-->
-<!--          if (selectedDate.toDateString() === currentDate.toDateString() && totalMinutes <= currentTime) {-->
-<!--            continue;-->
-<!--          }-->
-
-<!--          const timeString = formatTime(hour, minute);-->
-<!--          timeSlotsContainer.append(`-->
-<!--                        <div class="col-md-2 col-4 my-1 px-2">-->
-<!--                            <div class="cell py-1">${timeString}</div>-->
-<!--                        </div>-->
-<!--                    `);-->
-<!--        }-->
-<!--      }-->
-
-<!--      // 슬롯 클릭 시 선택 처리-->
-<!--      $('.cell').on('click', function () {-->
-<!--        $('.cell').removeClass('selected');-->
-<!--        $(this).addClass('selected');-->
-<!--      });-->
-<!--    }-->
-
-<!--    // 슬롯 클릭 시 선택 처리 및 hidden input에 값 저장-->
-<!--    $('.cell').on('click', function () {-->
-<!--      $('.cell').removeClass('selected');-->
-<!--      $(this).addClass('selected');-->
-<!--      const selectedTime = $(this).text();-->
-<!--      // 선택한 시간을 hidden input에 설정-->
-<!--      if ($('#selectedTime').length === 0) {-->
-<!--        $('<input>').attr({-->
-<!--          type: 'hidden',-->
-<!--          id: 'selectedTime',-->
-<!--          name: 'time',-->
-<!--          value: selectedTime-->
-<!--        }).appendTo('form');-->
-<!--      } else {-->
-<!--        $('#selectedTime').val(selectedTime);-->
-<!--      }-->
-<!--    });-->
-
-
-<!--    // 시간을 AM/PM 형식으로 변환하는 함수-->
-<!--    function formatTime(hour, minute) {-->
-<!--      let period = hour >= 12 ? 'PM' : 'AM';-->
-<!--      let displayHour = hour % 12 || 12;-->
-<!--      let displayMinute = minute < 10 ? '0' + minute : minute;-->
-<!--      return `${displayHour}:${displayMinute}${period}`;-->
-<!--    }-->
-<!--  });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
-<!--<!DOCTYPE html>-->
-<!--<html lang="ko" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--  <meta charset="UTF-8">-->
-<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--  <title th:text="#{page.reservation.create}">예약 생성</title>-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">-->
-<!--  <style>-->
-<!--    .cell {-->
-<!--      background-color: #f8f9fa;-->
-<!--      border: 1px solid #dee2e6;-->
-<!--      border-radius: 5px;-->
-<!--      cursor: pointer;-->
-<!--      transition: background-color 0.3s ease;-->
-<!--    }-->
-
-<!--    .cell:hover {-->
-<!--      background-color: #e2e6ea;-->
-<!--    }-->
-
-<!--    .cell.selected {-->
-<!--      background-color: #007bff;-->
-<!--      color: white;-->
-<!--    }-->
-<!--  </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div class="container">-->
-<!--  <h3 class="mt-4" th:text="#{page.reservation.create}">예약 생성</h3>-->
-<!--  <form th:action="@{/reservation/save}" method="post">-->
-<!--    <div class="mb-3">-->
-<!--      <label for="reservationDate" class="form-label" th:text="#{label.reservation.date}">예약 날짜:</label>-->
-<!--      <input type="date" class="form-control" id="dp1" name="date" required>-->
-<!--    </div>-->
-<!--    <div class="mb-3">-->
-<!--      <label for="reservationTime" class="form-label" th:text="#{label.reservation.time}">예약 시간:</label>-->
-<!--      <div id="timeSlots" class="row"></div>-->
-<!--    </div>-->
-<!--    <div class="mb-3">-->
-<!--      <label for="ophthalmology" class="form-label" th:text="#{label.reservation.ophthalmology}">병원:</label>-->
-<!--      <select class="form-select" id="ophthalmology" name="ophthalmology" required>-->
-<!--        &lt;!&ndash; 병원 목록이 동적으로 생성됩니다. &ndash;&gt;-->
-<!--      </select>-->
-<!--    </div>-->
-<!--    <button type="submit" class="btn btn-primary" th:text="#{button.reserve}">예약하기</button>-->
-<!--    <a href="/reservation/list" class="btn btn-secondary" th:text="#{button.cancel}">취소</a>-->
-<!--  </form>-->
-<!--</div>-->
-
-<!--&lt;!&ndash; JS &ndash;&gt;-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>-->
-<!--<script>-->
-<!--  $(document).ready(function () {-->
-<!--    // 오늘 날짜 이후만 선택 가능하게 설정-->
-<!--    const today = new Date();-->
-<!--    $('#dp1').datepicker({-->
-<!--      format: 'yyyy-mm-dd',-->
-<!--      autoclose: true,-->
-<!--      todayHighlight: true,-->
-<!--      startDate: today // 오늘 이후 날짜만 선택 가능-->
-<!--    }).on('changeDate', function () {-->
-<!--      generateTimeSlots();-->
-<!--    });-->
-
-<!--    // 시간 슬롯 생성 함수-->
-<!--    function generateTimeSlots() {-->
-<!--      const timeSlotsContainer = $('#timeSlots');-->
-<!--      timeSlotsContainer.empty(); // 기존 슬롯 초기화-->
-
-<!--      const startTime = 9; // 09:00-->
-<!--      const endTime = 18; // 18:00-->
-<!--      const interval = 15; // 15분 간격-->
-<!--      const lunchStart = 13 * 60; // 점심 시작 13:00-->
-<!--      const lunchEnd = 14 * 60; // 점심 끝 14:00-->
-
-<!--      const selectedDate = new Date($('#dp1').datepicker('getDate'));-->
-<!--      const currentDate = new Date();-->
-<!--      const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes(); // 현재 시각(분 단위)-->
-
-<!--      for (let hour = startTime; hour < endTime; hour++) {-->
-<!--        for (let minute = 0; minute < 60; minute += interval) {-->
-<!--          const totalMinutes = hour * 60 + minute;-->
-
-<!--          // 점심 시간 제외-->
-<!--          if (totalMinutes >= lunchStart && totalMinutes < lunchEnd) {-->
-<!--            continue;-->
-<!--          }-->
-
-<!--          // 오늘 선택 시, 현재 시간 이전 슬롯은 비활성화-->
-<!--          if (selectedDate.toDateString() === currentDate.toDateString() && totalMinutes <= currentTime) {-->
-<!--            continue;-->
-<!--          }-->
-
-<!--          const timeString = formatTime(hour, minute);-->
-<!--          timeSlotsContainer.append(`-->
-<!--                        <div class="col-md-2 col-4 my-1 px-2">-->
-<!--                            <div class="cell py-1">${timeString}</div>-->
-<!--                        </div>-->
-<!--                    `);-->
-<!--        }-->
-<!--      }-->
-
-<!--      // 슬롯 클릭 시 선택 처리-->
-<!--      $('.cell').on('click', function () {-->
-<!--        $('.cell').removeClass('selected');-->
-<!--        $(this).addClass('selected');-->
-<!--        const selectedTime = $(this).text();-->
-<!--        // 선택한 시간을 hidden input에 설정-->
-<!--        if ($('#selectedTime').length === 0) {-->
-<!--          $('<input>').attr({-->
-<!--            type: 'hidden',-->
-<!--            id: 'selectedTime',-->
-<!--            name: 'time',-->
-<!--            value: selectedTime-->
-<!--          }).appendTo('form');-->
-<!--        } else {-->
-<!--          $('#selectedTime').val(selectedTime);-->
-<!--        }-->
-<!--      });-->
-<!--    }-->
-
-<!--    // 시간을 AM/PM 형식으로 변환하는 함수-->
-<!--    function formatTime(hour, minute) {-->
-<!--      let period = hour >= 12 ? 'PM' : 'AM';-->
-<!--      let displayHour = hour % 12 || 12;-->
-<!--      let displayMinute = minute < 10 ? '0' + minute : minute;-->
-<!--      return `${displayHour}:${displayMinute}${period}`;-->
-<!--    }-->
-<!--  });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
-
-
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="ko" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--  <meta charset="UTF-8">-->
-<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--  <title>예약 생성</title>-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">-->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">-->
-<!--  <style>-->
-<!--    .cell {-->
-<!--      background-color: #f8f9fa;-->
-<!--      border: 1px solid #dee2e6;-->
-<!--      border-radius: 5px;-->
-<!--      cursor: pointer;-->
-<!--      transition: background-color 0.3s ease;-->
-<!--    }-->
-
-<!--    .cell:hover {-->
-<!--      background-color: #e2e6ea;-->
-<!--    }-->
-
-<!--    .cell.selected {-->
-<!--      background-color: #007bff;-->
-<!--      color: white;-->
-<!--    }-->
-<!--  </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div class="container-fluid px-0 px-sm-4 mx-auto">-->
-<!--  <div class="row justify-content-center mx-0">-->
-<!--    <div class="col-lg-10">-->
-<!--      <div class="card border-0">-->
-<!--        <form th:action="@{/reservation/save}" method="post" autocomplete="off">-->
-<!--          <div class="card-header bg-dark text-white">-->
-<!--            <div class="mx-0 mb-0 row justify-content-sm-center justify-content-start px-1">-->
-<!--              <input type="text" id="dp1" class="datepicker" placeholder="날짜 선택" name="date" readonly>-->
-<!--              <span class="fa fa-calendar"></span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="card-body p-3 p-sm-5">-->
-<!--            <div id="timeSlots" class="row text-center mx-0"></div>-->
-<!--            <button type="submit" class="btn btn-primary mt-4">예약하기</button>-->
-<!--          </div>-->
-<!--        </form>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--&lt;!&ndash; JS &ndash;&gt;-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>-->
-<!--<script>-->
-<!--  $(document).ready(function () {-->
-<!--    // 오늘 날짜 이후만 선택 가능하게 설정-->
-<!--    const today = new Date();-->
-<!--    $('#dp1').datepicker({-->
-<!--      format: 'yyyy-mm-dd',-->
-<!--      autoclose: true,-->
-<!--      todayHighlight: true,-->
-<!--      startDate: today // 오늘 이후 날짜만 선택 가능-->
-<!--    }).on('changeDate', function (e) {-->
-<!--      generateTimeSlots();-->
-<!--    });-->
-
-<!--    // 시간 슬롯 생성 함수-->
-<!--    function generateTimeSlots() {-->
-<!--      const timeSlotsContainer = $('#timeSlots');-->
-<!--      timeSlotsContainer.empty(); // 기존 슬롯 초기화-->
-
-<!--      const startTime = 9; // 09:00-->
-<!--      const endTime = 18; // 18:00-->
-<!--      const interval = 15; // 15분 간격-->
-<!--      const lunchStart = 13 * 60; // 점심 시작 13:00-->
-<!--      const lunchEnd = 14 * 60; // 점심 끝 14:00-->
-
-<!--      const selectedDate = new Date($('#dp1').datepicker('getDate'));-->
-<!--      const currentDate = new Date();-->
-<!--      const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes(); // 현재 시각(분 단위)-->
-
-<!--      for (let hour = startTime; hour < endTime; hour++) {-->
-<!--        for (let minute = 0; minute < 60; minute += interval) {-->
-<!--          const totalMinutes = hour * 60 + minute;-->
-
-<!--          // 점심 시간 제외-->
-<!--          if (totalMinutes >= lunchStart && totalMinutes < lunchEnd) {-->
-<!--            continue;-->
-<!--          }-->
-
-<!--          // 오늘 선택 시, 현재 시간 이전 슬롯은 비활성화-->
-<!--          if (selectedDate.toDateString() === currentDate.toDateString() && totalMinutes <= currentTime) {-->
-<!--            continue;-->
-<!--          }-->
-
-<!--          const timeString = formatTime(hour, minute);-->
-<!--          timeSlotsContainer.append(-->
-<!--                  <div class="col-md-2 col-4 my-1 px-2">-->
-<!--                    <div class="cell py-1">${timeString}</div>-->
-<!--                  </div>-->
-<!--          );-->
-<!--        }-->
-<!--      }-->
-
-<!--      // 슬롯 클릭 시 선택 처리-->
-<!--      $('.cell').on('click', function () {-->
-<!--        $('.cell').removeClass('selected');-->
-<!--        $(this).addClass('selected');-->
-<!--      });-->
-<!--    }-->
-
-<!--    // 시간을 AM/PM 형식으로 변환하는 함수-->
-<!--    function formatTime(hour, minute) {-->
-<!--      let period = hour >= 12 ? 'PM' : 'AM';-->
-<!--      let displayHour = hour % 12 || 12;-->
-<!--      let displayMinute = minute < 10 ? '0' + minute : minute;-->
-<!--      return '${displayHour}:${displayMinute}${period}';-->
-<!--    }-->
-<!--  });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->

@@ -7,7 +7,7 @@
 
 <div class="container">
   <h3>회원 수정</h3>
-  <form id="update-form" th:action="@{/user/update}" method="post">
+  <form id="update-form" th:action="@{/update}" method="post">
     <input type="hidden" th:value="${user.id}" name="id" id="id"/>
 
     <label for="password">비밀번호

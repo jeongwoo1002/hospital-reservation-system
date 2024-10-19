@@ -1,134 +1,3 @@
-//package hello.login.domain.model;
-//
-//import javax.persistence.*;
-//import java.time.LocalDate;
-//import java.time.LocalTime;
-//
-//@Entity
-//public class Reservation {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//    private String patientName;
-//    private String contactNumber;
-//    private LocalDate reservationDate;
-//    private LocalTime reservationTime;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "ophthalmology_id")
-//    private Ophthalmology ophthalmology;
-//
-//    // 병원 ID 추가
-//    private Long hospitalId;
-//
-//    // 병원 운영 시간
-//    private static final LocalTime OPENING_TIME = LocalTime.of(9, 0);
-//    private static final LocalTime CLOSING_TIME = LocalTime.of(18, 0);
-//
-//    // 점심 시간
-//    private static final LocalTime LUNCH_START = LocalTime.of(13, 0);
-//    private static final LocalTime LUNCH_END = LocalTime.of(14, 0);
-//
-//    // 예약 시간 단위 (15분)
-//    private static final int RESERVATION_INTERVAL_MINUTES = 15;
-//
-//    // 예약 가능 여부 확인
-//    public boolean isReservable() {
-//        // 과거 날짜 예약 불가
-//        if (reservationDate.isBefore(LocalDate.now())) {
-//            return false;
-//        }
-//
-//        // 운영 시간 내에 있는지 확인
-//        if (reservationTime.isBefore(OPENING_TIME) || reservationTime.plusMinutes(RESERVATION_INTERVAL_MINUTES).isAfter(CLOSING_TIME)) {
-//            return false;
-//        }
-//
-//        // 점심 시간 내 예약 불가
-//        if (!reservationTime.isBefore(LUNCH_START) && reservationTime.isBefore(LUNCH_END)) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
-//
-//    // 예약 시간이 중복되는지 확인
-//    public boolean isTimeConflict(Reservation otherReservation) {
-//        return this.reservationDate.equals(otherReservation.getReservationDate()) &&
-//                !this.reservationTime.isBefore(otherReservation.getReservationTime()) &&
-//                this.reservationTime.isBefore(otherReservation.getReservationTime().plusMinutes(RESERVATION_INTERVAL_MINUTES));
-//    }
-//
-//    // Getters and Setters
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
-//    public String getPatientName() {
-//        return patientName;
-//    }
-//
-//    public void setPatientName(String patientName) {
-//        this.patientName = patientName;
-//    }
-//
-//    public String getContactNumber() {
-//        return contactNumber;
-//    }
-//
-//    public void setContactNumber(String contactNumber) {
-//        this.contactNumber = contactNumber;
-//    }
-//
-//    public LocalDate getReservationDate() {
-//        return reservationDate;
-//    }
-//
-//    public void setReservationDate(LocalDate reservationDate) {
-//        this.reservationDate = reservationDate;
-//    }
-//
-//    public LocalTime getReservationTime() {
-//        return reservationTime;
-//    }
-//
-//    public void setReservationTime(LocalTime reservationTime) {
-//        this.reservationTime = reservationTime;
-//    }
-//
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
-//
-//    public Ophthalmology getOphthalmology() {
-//        return ophthalmology;
-//    }
-//
-//    public void setOphthalmology(Ophthalmology ophthalmology) {
-//        this.ophthalmology = ophthalmology;
-//    }
-//
-//    public Long getHospitalId() {
-//        return hospitalId;
-//    }
-//
-//    public void setHospitalId(Long hospitalId) {
-//        this.hospitalId = hospitalId;
-//    }
-//}
 package hello.login.domain.model;
 
 import lombok.Getter;
@@ -138,125 +7,58 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Entity
 @Getter
 @Setter
+@Entity
 public class Reservation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String patientName;
-    private String contactNumber;
-    private LocalDate reservationDate;
-    private LocalTime reservationTime;
+    private String patientName;      // 예약자 이름
+    private String contactNumber;    // 예약자 연락처
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private LocalDate reservationDate;   // 예약 날짜
+    private LocalTime reservationTime;   // 예약 시간
 
-    @ManyToOne
-    @JoinColumn(name = "ophthalmology_id")
-    private Ophthalmology ophthalmology;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;  // 예약한 사용자 (User 엔티티와 연관)
 
-    private String status; // 예약 상태 필드 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ophthalmology_id", nullable = false)
+    private Ophthalmology ophthalmology;  // 안과와의 관계 설정 (Ophthalmology 엔티티와 연관)
 
+    /**
+     * 예약 가능한 시간인지 확인하는 메서드
+     * 점심 시간 (13:00~14:00), 평일(09:00~18:00) 외, 토요일(09:00~15:00) 외 시간은 예약 불가
+     */
+    public static boolean isTimeSlotAvailable(LocalTime time, LocalDate date) {
+        boolean isLunchTime = time.isAfter(LocalTime.of(13, 0)) && time.isBefore(LocalTime.of(14, 0));
+        boolean isSaturdayAfterHours = date.getDayOfWeek() == java.time.DayOfWeek.SATURDAY && time.isAfter(LocalTime.of(15, 0));
+        boolean isWeekdayOutsideHours = date.getDayOfWeek().getValue() < 6 && (time.isBefore(LocalTime.of(9, 0)) || time.isAfter(LocalTime.of(18, 0)));
+        boolean isSunday = date.getDayOfWeek() == java.time.DayOfWeek.SUNDAY;
 
-
-
-    // 병원 운영 시간
-    private static final LocalTime OPENING_TIME = LocalTime.of(9, 0);
-    private static final LocalTime CLOSING_TIME = LocalTime.of(18, 0);
-
-    // 점심 시간
-    private static final LocalTime LUNCH_START = LocalTime.of(13, 0);
-    private static final LocalTime LUNCH_END = LocalTime.of(14, 0);
-
-    // 예약 시간 단위 (15분)
-    private static final int RESERVATION_INTERVAL_MINUTES = 15;
-
-    // 예약 가능 여부 확인
-    public boolean isReservable() {
-        // 과거 날짜 예약 불가
-        if (reservationDate.isBefore(LocalDate.now())) {
-            return false;
-        }
-
-        // 운영 시간 내에 있는지 확인
-        if (reservationTime.isBefore(OPENING_TIME) || reservationTime.plusMinutes(RESERVATION_INTERVAL_MINUTES).isAfter(CLOSING_TIME)) {
-            return false;
-        }
-
-        // 점심 시간 내 예약 불가
-        if (!reservationTime.isBefore(LUNCH_START) && reservationTime.isBefore(LUNCH_END)) {
-            return false;
-        }
-
-        return true;
+        return !(isLunchTime || isSaturdayAfterHours || isWeekdayOutsideHours || isSunday);
     }
 
-    // 예약 시간이 중복되는지 확인
-    public boolean isTimeConflict(Reservation otherReservation) {
-        return this.reservationDate.equals(otherReservation.getReservationDate()) &&
-                !this.reservationTime.isBefore(otherReservation.getReservationTime()) &&
-                this.reservationTime.isBefore(otherReservation.getReservationTime().plusMinutes(RESERVATION_INTERVAL_MINUTES));
+    // 예약 생성 메서드
+    public static Reservation createReservation(String patientName, String contactNumber, LocalDate reservationDate, LocalTime reservationTime, User user, Ophthalmology ophthalmology) {
+        Reservation reservation = new Reservation();
+        reservation.setPatientName(patientName);
+        reservation.setContactNumber(contactNumber);
+        reservation.setReservationDate(reservationDate);
+        reservation.setReservationTime(reservationTime);
+        reservation.setUser(user);
+        reservation.setOphthalmology(ophthalmology);
+        return reservation;
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPatientName() {
-        return patientName;
-    }
-
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
-    }
-
-    public String getContactNumber() {
-        return contactNumber;
-    }
-
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    public LocalDate getReservationDate() {
-        return reservationDate;
-    }
-
-    public void setReservationDate(LocalDate reservationDate) {
+    // 예약 수정 메서드
+    public void updateReservation(LocalDate reservationDate, LocalTime reservationTime, Ophthalmology ophthalmology) {
         this.reservationDate = reservationDate;
-    }
-
-    public LocalTime getReservationTime() {
-        return reservationTime;
-    }
-
-    public void setReservationTime(LocalTime reservationTime) {
         this.reservationTime = reservationTime;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Ophthalmology getOphthalmology() {
-        return ophthalmology;
-    }
-
-    public void setOphthalmology(Ophthalmology ophthalmology) {
         this.ophthalmology = ophthalmology;
     }
-
 }

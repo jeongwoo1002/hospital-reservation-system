@@ -3,7 +3,10 @@ package hello.login.domain.controller;
 import hello.login.domain.config.auth.PrincipalDetail;
 import hello.login.domain.dto.LoginForm;
 import hello.login.domain.dto.UserDto;
+import hello.login.domain.model.Reservation;
+import hello.login.domain.model.User;
 import hello.login.domain.repository.UserRepository;
+import hello.login.domain.service.ReservationService;
 import hello.login.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +18,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
 
     private final UserService userService;
+    private final ReservationService reservationService;
 //    private final UserRepository userRepository;
 
     /**
@@ -72,4 +78,12 @@ public class UserController {
         model.addAttribute("user", userDto);
         return "user/userInfo";
     }
+    @GetMapping("/user/reservations")
+    public String getUserReservations(Model model, @AuthenticationPrincipal PrincipalDetail principal) {
+        Long userId = principal.getUser().getId(); // 로그인한 사용자의 ID 가져오기
+        List<Reservation> reservations = reservationService.getUserReservations(userId);
+        model.addAttribute("reservations", reservations);
+        return "reservation/userReservations"; // 반환할 HTML 경로
+    }
+
 }

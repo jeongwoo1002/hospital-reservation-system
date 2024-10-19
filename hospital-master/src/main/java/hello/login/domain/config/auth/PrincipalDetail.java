@@ -19,6 +19,10 @@ public class PrincipalDetail implements UserDetails {
         this.user = user;
     }
 
+    public PrincipalDetail() {
+
+    }
+
 
     @Override
     public String getPassword() {
