@@ -27,7 +27,7 @@ public class UserController {
 
     private final UserService userService;
     private final ReservationService reservationService;
-//    private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /**
      * 회원가입 폼으로 이동

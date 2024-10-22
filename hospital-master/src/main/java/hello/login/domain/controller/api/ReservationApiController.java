@@ -22,7 +22,7 @@ public class ReservationApiController {
     @PostMapping
     public ResponseEntity<String> createReservation(@RequestBody ReservationForm reservationForm, HttpSession session) {
         User user = (User) session.getAttribute("user"); // 세션에서 사용자 가져오기
-        reservationService.saveReservation(reservationForm, user);
+        reservationService.save(reservationForm, user);
         return ResponseEntity.ok("예약이 성공적으로 생성되었습니다.");
     }
 

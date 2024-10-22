@@ -24,9 +24,14 @@ public class UserService {
      */
     @Transactional
     public void join(UserDto userDto) {
-        User user = User.join(userDto);
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userRepository.save(user);
+        try {
+            User user = User.join(userDto);
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userRepository.save(user);
+        } catch (Exception e) {
+            log.error("회원가입 오류: ", e);
+            throw e; // 예외를 다시 던져서 호출자에게 알림
+        }
     }
 
     /**
@@ -37,21 +42,36 @@ public class UserService {
         User user = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("회원 수정 실패"));
 
-        // 비밀번호가 제공된 경우 암호화하여 업데이트
+        // 비밀번호가 제공된 경우에만 업데이트, 그렇지 않으면 기존 값 유지
         if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
             String encPassword = passwordEncoder.encode(userDto.getPassword());
             user.setPassword(encPassword);
         }
 
-        // 나머지 필드 업데이트
-        user.setName(userDto.getName());
-        user.setNumber(userDto.getNumber());
-        user.setAddress(userDto.getAddress());
-        user.setResident(userDto.getResident());
+        // 이름이 빈 값이 아니면 업데이트
+        if (userDto.getName() != null && !userDto.getName().isEmpty()) {
+            user.setName(userDto.getName());
+        }
 
-        // 사용자 정보를 데이터베이스에 저장 (JPA가 자동으로 처리)
-        userRepository.save(user); // 이 줄은 선택적입니다. JPA는 @Transactional을 통해 자동으로 저장합니다.
+        // 번호가 빈 값이 아니면 업데이트
+        if (userDto.getNumber() != null && !userDto.getNumber().isEmpty()) {
+            user.setNumber(userDto.getNumber());
+        }
+
+        // 주소가 빈 값이 아니면 업데이트
+        if (userDto.getAddress() != null && !userDto.getAddress().isEmpty()) {
+            user.setAddress(userDto.getAddress());
+        }
+
+        // 주민번호가 빈 값이 아니면 업데이트
+        if (userDto.getResident() != null && !userDto.getResident().isEmpty()) {
+            user.setResident(userDto.getResident());
+        }
+
+        // 사용자 정보를 데이터베이스에 저장
+        userRepository.save(user);
     }
+
 
     /**
      * 사용자 정보 조회

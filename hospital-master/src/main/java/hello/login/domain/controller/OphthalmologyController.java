@@ -80,7 +80,7 @@ public class OphthalmologyController {
     @PostMapping("/reservation/new")
     public String createReservation(@AuthenticationPrincipal UserDetails userDetails, @ModelAttribute ReservationForm reservationForm) {
         User user = userService.findByUsername(userDetails.getUsername());
-        reservationService.saveReservation(reservationForm, user);
+        reservationService.save(reservationForm, user);
         return "redirect:/user/reservations";
     }
 
@@ -130,3 +130,5 @@ public class OphthalmologyController {
 //        return ophthalmologyService.findNearbyOphthalmologies(lat, lng);
 //    }
 }
+
+

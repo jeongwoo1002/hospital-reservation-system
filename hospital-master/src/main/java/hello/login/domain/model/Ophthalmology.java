@@ -28,4 +28,8 @@ public class Ophthalmology {
     @OneToMany(mappedBy = "ophthalmology", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
 
+    // Ophthalmology ID를 받는 생성자 추가
+    public Ophthalmology(Long id) {
+        this.id = id;
+    }
 }

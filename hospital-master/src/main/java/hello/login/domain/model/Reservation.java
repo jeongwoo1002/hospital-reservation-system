@@ -15,10 +15,6 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String patientName;      // 예약자 이름
-    private String contactNumber;    // 예약자 연락처
-
     private LocalDate reservationDate;   // 예약 날짜
     private LocalTime reservationTime;   // 예약 시간
 
@@ -44,16 +40,29 @@ public class Reservation {
     }
 
     // 예약 생성 메서드
-    public static Reservation createReservation(String patientName, String contactNumber, LocalDate reservationDate, LocalTime reservationTime, User user, Ophthalmology ophthalmology) {
+    public static Reservation createReservation(LocalDate reservationDate, LocalTime reservationTime, User user, Ophthalmology ophthalmology) {
+        if (reservationDate == null || reservationTime == null || user == null || ophthalmology == null) {
+            throw new IllegalArgumentException("예약 정보를 모두 입력해야 합니다.");
+        }
+
         Reservation reservation = new Reservation();
-        reservation.setPatientName(patientName);
-        reservation.setContactNumber(contactNumber);
         reservation.setReservationDate(reservationDate);
         reservation.setReservationTime(reservationTime);
         reservation.setUser(user);
         reservation.setOphthalmology(ophthalmology);
         return reservation;
     }
+//    // 예약 생성 메서드
+//    public static Reservation createReservation(String patientName, String contactNumber, LocalDate reservationDate, LocalTime reservationTime, User user, Ophthalmology ophthalmology) {
+//        Reservation reservation = new Reservation();
+//        reservation.setPatientName(patientName);
+//        reservation.setContactNumber(contactNumber);
+//        reservation.setReservationDate(reservationDate);
+//        reservation.setReservationTime(reservationTime);
+//        reservation.setUser(user);
+//        reservation.setOphthalmology(ophthalmology);
+//        return reservation;
+//    }
 
     // 예약 수정 메서드
     public void updateReservation(LocalDate reservationDate, LocalTime reservationTime, Ophthalmology ophthalmology) {
@@ -62,3 +71,4 @@ public class Reservation {
         this.ophthalmology = ophthalmology;
     }
 }
+
