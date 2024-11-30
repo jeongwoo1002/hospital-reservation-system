@@ -23,7 +23,9 @@ public class PrincipalDetail implements UserDetails {
 
     }
 
-
+    public String getName() {
+        return user.getName(); // 이름 반환 메서드 추가
+    }
     @Override
     public String getPassword() {
         return user.getPassword();

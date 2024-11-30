@@ -94,6 +94,27 @@
             });
         });
     });
+    document.addEventListener("DOMContentLoaded", function() {
+        const fields = [
+            { selector: "#username", message: "아이디를 입력하세요" },
+            { selector: "#password", message: "비밀번호를 입력하세요" },
+            { selector: "#name", message: "이름을 입력하세요" },
+            { selector: "#number", message: "전화번호를 입력하세요" },
+            { selector: "#resident", message: "주민등록번호를 입력하세요" },
+            { selector: "#address", message: "주소를 입력하세요" },
+            { selector: "button[type='submit']", message: "회원가입하시겠습니까" }
+        ];
+
+        fields.forEach(field => {
+            const element = document.querySelector(field.selector);
+            if (element) {
+                element.addEventListener("focus", () => {
+                    const utterance = new SpeechSynthesisUtterance(field.message);
+                    window.speechSynthesis.speak(utterance);
+                });
+            }
+        });
+    });
 </script>
 </body>
 

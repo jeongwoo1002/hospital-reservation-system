@@ -13,6 +13,7 @@
     <thead>
     <tr>
       <th>병원</th>
+      <th>병원 주소</th> <!-- 병원 주소 열 추가 -->
       <th>환자 이름</th>
       <th>연락처</th>
       <th>예약 날짜 및 시간</th>
@@ -22,31 +23,113 @@
     </thead>
     <tbody>
     <th:block th:if="${not #lists.isEmpty(reservations)}">
-      <tr th:each="reservation : ${reservations}">
-        <td th:text="${reservation.ophthalmology.name}">안과 이름</td>
-        <td th:text="${reservation.user.name}">환자 이름</td>
-        <td th:text="${reservation.user.number}">연락처</td>
-        <td th:text="${reservation.reservationDate} + ' ' + ${reservation.reservationTime}">예약 날짜 및 시간</td> <!-- 예약 날짜 및 시간 -->
+      <tr th:each="reservation : ${reservations}" role="row">
+        <td tabindex="0" th:text="${reservation.ophthalmology.name}">안과 이름</td>
+        <td tabindex="0" th:text="${reservation.ophthalmology.address}">병원 주소</td> <!-- 병원 주소 데이터 추가 -->
+        <td tabindex="0" th:text="${reservation.user.name}">환자 이름</td>
+        <td tabindex="0" th:text="${reservation.user.number}">연락처</td>
+        <td tabindex="0" th:text="${reservation.reservationDate} + ' ' + ${reservation.reservationTime}">예약 날짜 및 시간</td>
 
-<!--        <td th:text="${reservation.reservationDate}">예약 날짜</td>-->
-<!--        <td th:text="${reservation.reservationTime}">예약 시간</td>-->
-<!--        <td><a th:href="@{/user/reservations/{id}(id=${reservation.id})}">상세보기</a></td>-->
-        <td><a th:href="@{/reservation/user/reservations/edit/{id}(id=${reservation.id})}">수정</a></td>
+        <!-- 수정 버튼에 tabindex 추가 -->
         <td>
-          <form th:action="@{/user/reservations/delete/{id}(id=${reservation.id})}" method="post">
-            <input type="submit" value="삭제" onclick="return confirm('정말 삭제하시겠습니까?');"/>
+          <a role="button" tabindex="0" th:href="@{/reservation/user/reservations/edit/{id}(id=${reservation.id})}">수정</a>
+        </td>
+
+        <!-- 삭제 버튼에 tabindex 추가 -->
+        <td>
+          <form th:action="@{/reservation/user/reservations/delete/{id}(id=${reservation.id})}" method="post">
+            <input type="submit" value="삭제" onclick="return confirm('정말 삭제하시겠습니까?');" tabindex="0" />
           </form>
         </td>
       </tr>
     </th:block>
     <th:block th:if="${#lists.isEmpty(reservations)}">
       <tr>
-        <td colspan="6">예약이 없습니다.</td>
+        <td colspan="7" tabindex="0">예약이 없습니다.</td> <!-- colspan 조정 -->
       </tr>
     </th:block>
     </tbody>
   </table>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const elements = document.querySelectorAll('td[tabindex], a[tabindex], input[tabindex], h3');
+    let currentUtterance = null; // 현재 음성 합성 객체를 저장하는 변수
+
+    // 음성 안내 함수
+    function speak(text) {
+      if (currentUtterance) {
+        window.speechSynthesis.cancel(); // 기존 음성 합성 중지
+      }
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(currentUtterance);
+    }
+
+    // 기본적인 항목 읽기 처리
+    const basicLinks = document.querySelectorAll("a[role='menuitem']");
+    basicLinks.forEach(link => {
+      link.addEventListener('click', function() {
+        speak(link.textContent.trim());
+      });
+    });
+
+    // "예약이 없습니다" 안내
+    const noReservationsMessage = document.querySelector('tbody tr td[colspan="7"]');
+    if (noReservationsMessage) {
+      noReservationsMessage.addEventListener('keydown', function (event) {
+        if (event.key === 'a') {
+          speak('예약이 없습니다.');
+        }
+      });
+    }
+
+    elements.forEach(element => {
+      // Enter 키로 동작 실행
+      element.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          if (element.tagName.toLowerCase() === 'a') {
+            element.click();
+          } else if (element.tagName.toLowerCase() === 'input') {
+            element.form.submit();
+          }
+        }
+
+        // A 키로 음성 안내
+        if (event.key === 'a') {
+          let message = '';
+
+          // 상단바와 제목에 대한 음성 안내 추가
+          if (element.tagName.toLowerCase() === 'h3') {
+            message = '나의 예약 현황';
+          } else if (element.tagName.toLowerCase() === 'a' && element.textContent.trim() === '수정') {
+            message = '예약을 수정하시겠습니까?';
+          } else if (element.tagName.toLowerCase() === 'input' && element.value === '삭제') {
+            message = '예약을 삭제하시겠습니까?';
+          } else {
+            // 병원, 환자 이름, 연락처, 예약 날짜 및 시간 안내
+            const row = element.closest('tr');
+            const hospitalName = row.querySelector('td:nth-child(1)').textContent.trim();
+            const hospitalAddress = row.querySelector('td:nth-child(2)').textContent.trim(); // 병원 주소 추가
+            const patientName = row.querySelector('td:nth-child(3)').textContent.trim();
+            const contactNumber = row.querySelector('td:nth-child(4)').textContent.trim();
+            const reservationDateTime = row.querySelector('td:nth-child(5)').textContent.trim();
+
+            message = `병원: ${hospitalName}, 주소: ${hospitalAddress}, 환자 이름: ${patientName}, 연락처: ${contactNumber}, 예약 날짜 및 시간: ${reservationDateTime}`;
+          }
+
+          // 음성으로 안내
+          speak(message);
+        }
+
+        // S 키로 음성 멈추기
+        if (event.key === 's') {
+          window.speechSynthesis.cancel(); // 음성 합성 중지
+          currentUtterance = null; // 현재 음성 합성 객체 초기화
+        }
+      });
+    });
+  });
+</script>
 
 </body>
 </html>

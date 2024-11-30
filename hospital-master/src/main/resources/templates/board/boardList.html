@@ -18,40 +18,93 @@
 
   <table class="table table-striped">
     <thead>
-      <tr>
-        <th>번호</th>
-        <th>제목</th>
-        <th>작성자</th>
-        <th>작성일</th>
-      </tr>
+    <tr>
+      <th>번호</th>
+      <th>제목</th>
+      <th>작성자</th>
+      <th>작성일</th>
+    </tr>
     </thead>
     <tbody>
-      <tr th:each="board : ${boards}">
-        <td th:text="${board.id}"></td>
-        <td><a th:text="${board.title}" th:href="@{/board/detail/{id}(id=${board.id})}"></a></td>
-        <td th:text="${board.user.username}"></td>
-        <td th:text="${board.createDate}"></td>
-      </tr>
+    <tr th:each="board : ${boards}" role="row">
+      <td th:text="${board.id}" tabindex="0"></td>
+      <td>
+        <a th:text="${board.title}" th:href="@{/board/detail/{id}(id=${board.id})}" tabindex="0"></a>
+      </td>
+      <td th:text="${board.user.name}" tabindex="0"></td>
+      <td th:text="${board.createDate}" tabindex="0"></td>
+    </tr>
     </tbody>
   </table>
 
   <div>
-  <ul class="pagination justify-content-center">
-    <li class="page-item">
-      <a class="page-link" href="#">Previous</a>
-    </li>
-    <li class="page-item">
-      <a class="page-link" href="#"></a>
-    </li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <a class="page-link" href="#">Previous</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#"></a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
   </div>
 
   <div class="text-right">
-  <a type="button" class="btn btn-primary" th:href="@{/board/write}">글쓰기</a>
+    <a type="button" class="btn btn-primary" th:href="@{/board/write}">글쓰기</a>
   </div>
-</div> <!--container  -->
+</div> <!--container-->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const elements = document.querySelectorAll('td[tabindex], a[tabindex]');
+    let currentUtterance = null; // 현재 음성 합성 객체를 저장하는 변수
+
+    // 음성 안내 함수
+    function speak(text) {
+      if (currentUtterance) {
+        window.speechSynthesis.cancel(); // 기존 음성 합성 중지
+      }
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(currentUtterance);
+    }
+
+    elements.forEach(element => {
+      // Enter 키로 동작 실행
+      element.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          if (element.tagName.toLowerCase() === 'a') {
+            element.click();
+          }
+        }
+
+        // A 키로 음성 안내
+        if (event.key === 'a') {
+          let message = '';
+
+          // 번호, 제목, 작성자, 작성일 안내
+          const row = element.closest('tr');
+          const boardId = row.querySelector('td:nth-child(1)').textContent.trim();
+          const boardTitle = row.querySelector('td:nth-child(2) a').textContent.trim(); // 제목은 링크에서 가져오기
+          const boardAuthor = row.querySelector('td:nth-child(3)').textContent.trim();
+          const boardCreateDate = row.querySelector('td:nth-child(4)').textContent.trim();
+
+          message = `번호: ${boardId}, 제목: ${boardTitle}, 작성자: ${boardAuthor}, 작성일: ${boardCreateDate}`;
+
+          // 음성으로 안내
+          speak(message);
+        }
+
+        // S 키로 음성 멈추기
+        if (event.key === 's') {
+          window.speechSynthesis.cancel(); // 음성 합성 중지
+          currentUtterance = null; // 현재 음성 합성 객체 초기화
+        }
+      });
+    });
+  });
+</script>
+
 </body>
 </html>

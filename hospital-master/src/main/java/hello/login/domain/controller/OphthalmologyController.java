@@ -11,8 +11,6 @@ import hello.login.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -20,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/ophthalmology")
@@ -47,13 +44,6 @@ public class OphthalmologyController {
         model.addAttribute("keyword", keyword);
         return "ophthalmology/ophthalmologyList";
     }
-
-//    @GetMapping("/detail/{id}")
-//    public String getOphthalmologyDetail(@PathVariable Long id, Model model) {
-//        Ophthalmology ophthalmology = ophthalmologyService.getOphthalmologyById(id);
-//        model.addAttribute("ophthalmology", ophthalmology);
-//        return "ophthalmology/ophthalmologyDetail";
-//    }
 
     @GetMapping("/detail/{id}")
     public String getOphthalmologyDetail(@PathVariable Long id, Model model) {
@@ -122,13 +112,6 @@ public class OphthalmologyController {
         model.addAttribute("reservations", reservations);
         return "reservation/userReservations"; // userReservations.html로 이동
     }
-
-
-//
-//    @GetMapping("/nearby")
-//    public List<Ophthalmology> getNearbyOphthalmology(@RequestParam double lat, @RequestParam double lng) {
-//        return ophthalmologyService.findNearbyOphthalmologies(lat, lng);
-//    }
 }
 
 

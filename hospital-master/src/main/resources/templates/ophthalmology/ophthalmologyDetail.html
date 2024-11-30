@@ -283,7 +283,18 @@
     // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
     map.setBounds(bounds);
   }
+  // 페이지 로드 시 예약하기 버튼 요소 가져오기
+  const reserveButton = document.querySelector('.btn-primary[href*="reservation/create"]');
 
+  // 'd' 키를 눌렀을 때 예약하기 버튼 클릭
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'd') {
+      event.preventDefault(); // 기본 동작 방지
+      if (reserveButton) {
+        reserveButton.click(); // 예약하기 버튼 클릭
+      }
+    }
+  });
   // 페이지 로드시 클리닉의 주소로 위치를 이동
   document.addEventListener('DOMContentLoaded', function() {
     var address = document.getElementById('hospitalAddress').value;

@@ -1,128 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--  <meta charset="UTF-8">-->
-<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--  <title>예약 생성</title>-->
-<!--  &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
-<!--  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"-->
-<!--        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">-->
-<!--  &lt;!&ndash; jQuery와 jQuery UI 라이브러리 추가 &ndash;&gt;-->
-<!--  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
-<!--  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
-<!--  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
-<!--  &lt;!&ndash; Custom CSS &ndash;&gt;-->
-<!--  <style>-->
-<!--    .container {-->
-<!--      margin-top: 50px;-->
-<!--    }-->
-<!--  </style>-->
-<!--</head>-->
-<!--<body>-->
-
-<!--<div class="container">-->
-<!--  <h3 class="mb-4">예약 생성</h3>-->
-<!--  <form th:action="@{/reservation/create}" th:object="${reservationForm}" method="post" class="form-horizontal">-->
-<!--    <input type="hidden" th:field="*{id}" />-->
-<!--&lt;!&ndash;    <input type="hidden" th:field="*{ophthalmologyId}" id="ophthalmologyId" />&ndash;&gt;-->
-<!--    <input type="hidden" th:field="*{ophthalmologyId}" th:value="${ophthalmologyId}" />-->
-
-<!--    <div class="form-group">-->
-<!--      <label class="control-label col-sm-2">환자 이름:</label>-->
-<!--      <div class="col-sm-10">-->
-<!--        <input type="text" th:value="${patientName}" class="form-control" readonly />-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--      <label class="control-label col-sm-2">연락처:</label>-->
-<!--      <div class="col-sm-10">-->
-<!--        <input type="text" th:value="${contactNumber}" class="form-control" readonly />-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--      <label class="control-label col-sm-2">안과 병원:</label>-->
-<!--      <div class="col-sm-10">-->
-<!--        <input type="text" th:value="${ophthalmologyName}" class="form-control" readonly />-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--      <label for="reservationDate" class="control-label col-sm-2">예약 날짜:</label>-->
-<!--      <div class="col-sm-10">-->
-<!--        <input type="text" th:field="*{reservationDate}" id="reservationDate" class="form-control" required />-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--      <label for="reservationTime" class="control-label col-sm-2">예약 시간:</label>-->
-<!--      <div class="col-sm-10">-->
-<!--        <select th:field="*{reservationTime}" id="reservationTime" class="form-control" required>-->
-<!--          &lt;!&ndash; 시간 옵션은 JavaScript로 동적으로 추가됩니다 &ndash;&gt;-->
-<!--        </select>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--      <div class="col-sm-offset-2 col-sm-10">-->
-<!--        <button type="submit" class="btn btn-primary">예약</button>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </form>-->
-<!--</div>-->
-<!--<script>-->
-<!--  // 진료 시간 로직 설정-->
-<!--  const weekdayHours = [-->
-<!--    "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45",-->
-<!--    "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45",-->
-<!--    "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45",-->
-<!--    "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45"-->
-<!--  ];-->
-
-<!--  const saturdayHours = [-->
-<!--    "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45",-->
-<!--    "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45",-->
-<!--    "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45"-->
-<!--  ];-->
-
-<!--  // jQuery UI Datepicker 적용-->
-<!--  $(function() {-->
-<!--    $("#reservationDate").datepicker({-->
-<!--      dateFormat: "yy-mm-dd", // 날짜 형식-->
-<!--      minDate: 0, // 오늘 이후 날짜만 선택 가능-->
-<!--      beforeShowDay: function(date) {-->
-<!--        var day = date.getDay();-->
-<!--        // 주말 비활성화 (일요일)-->
-<!--        return [day !== 0, ''];-->
-<!--      },-->
-<!--      onSelect: function(dateText) {-->
-<!--        var date = new Date(dateText);-->
-<!--        var day = date.getDay();-->
-<!--        // 평일(월~금)인지 토요일인지에 따라 시간대 설정-->
-<!--        var hours = (day === 6) ? saturdayHours : weekdayHours;-->
-<!--        populateTimeSlots(hours);-->
-<!--      }-->
-<!--    });-->
-<!--  });-->
-
-<!--  // 시간대 선택 박스에 옵션 추가-->
-<!--  function populateTimeSlots(hours) {-->
-<!--    var timeSelect = document.getElementById('reservationTime');-->
-<!--    timeSelect.innerHTML = ''; // 기존 옵션 제거-->
-<!--    hours.forEach(time => {-->
-<!--      var option = document.createElement('option');-->
-<!--      option.value = time;-->
-<!--      option.textContent = time;-->
-<!--      timeSelect.appendChild(option);-->
-<!--    });-->
-<!--  }-->
-<!--</script>-->
-
-<!--</body>-->
-<!--</html>-->
-
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -130,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>예약 생성</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <style>
     .container {
       margin-top: 50px;
@@ -143,9 +15,11 @@
 
 <div class="container">
   <h3 class="mb-4">예약 생성</h3>
-  <form th:action="@{/reservation/create}" th:object="${reservationForm}" method="post" class="form-horizontal">
+  <form th:action="@{/reservation/create(ophthalmologyId=${ophthalmologyId})}" th:object="${reservationForm}" method="post" class="form-horizontal">
     <input type="hidden" th:field="*{id}" />
-    <input type="hidden" th:field="*{ophthalmologyId}" th:value="${ophthalmologyId}" />
+    <input type="hidden" th:field="*{ophthalmologyId}" th:value="6" />
+
+    <p th:text="${ophthalmologyId}">Ophthalmology ID</p>
 
     <div class="form-group">
       <label class="control-label col-sm-2">환자 이름:</label>
@@ -169,76 +43,129 @@
     </div>
 
     <div class="form-group">
-      <label for="reservationDate" class="control-label col-sm-2">예약 날짜:</label>
+      <label for="reservationDateList" class="control-label col-sm-2">예약 날짜:</label>
       <div class="col-sm-10">
-        <input type="text" th:field="*{reservationDate}" id="reservationDate" class="form-control" required />
+        <select th:field="*{reservationDate}" id="reservationDateList" class="form-control" aria-live="assertive">
+          <!-- 날짜 옵션은 JavaScript로 동적으로 추가됩니다 -->
+        </select>
       </div>
     </div>
+
 
     <div class="form-group">
       <label for="reservationTime" class="control-label col-sm-2">예약 시간:</label>
       <div class="col-sm-10">
         <select th:field="*{reservationTime}" id="reservationTime" class="form-control" required>
-          <!-- 시간 옵션은 JavaScript로 동적으로 추가됩니다 -->
+          <!-- 시간 옵션은 JavaScript로 추가됩니다 -->
         </select>
       </div>
     </div>
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary">예약</button>
+        <button type="submit" class="btn btn-primary">예약하기</button>
       </div>
     </div>
+    <script>
+      const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+
+      // 예약 가능한 날짜를 설정하는 함수
+      function populateDateList() {
+        const dateList = document.getElementById('reservationDateList');
+        const today = new Date();
+
+        for (let i = 0; i < 30; i++) { // 30일간의 날짜 생성
+          const date = new Date(today);
+          date.setDate(today.getDate() + i);
+          const day = date.getDay();
+
+          if (day === 0) continue; // 일요일 제외
+
+          const option = document.createElement('option');
+          option.value = date.toISOString().slice(0, 10); // YYYY-MM-DD 형식
+          option.textContent = `${date.toISOString().slice(0, 10)} (${daysOfWeek[day]})`;
+          dateList.appendChild(option);
+        }
+
+        // 음성 안내
+        dateList.addEventListener('change', function () {
+          const selectedDate = dateList.options[dateList.selectedIndex].textContent;
+          const utterance = new SpeechSynthesisUtterance(`선택된 날짜는 ${selectedDate} 입니다.`);
+          window.speechSynthesis.speak(utterance);
+        });
+      }
+
+      // 예약 가능한 시간 설정
+      const weekdayHours = [
+        "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45",
+        "11:00", "11:15", "11:30", "11:45", "14:00", "14:15", "14:30", "14:45",
+        "15:00", "15:15", "15:30", "15:45", "16:00", "16:15", "16:30", "16:45",
+        "17:00", "17:15", "17:30", "17:45"
+      ];
+
+      const saturdayHours = [
+        "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45",
+        "11:00", "11:15", "11:30", "11:45", "13:00", "13:15", "13:30", "13:45",
+        "14:00", "14:15", "14:30", "14:45"
+      ];
+
+      // 날짜 선택에 따라 시간 선택 설정
+      function populateTimeSlots(hours) {
+        const timeSelect = document.getElementById('reservationTime');
+        timeSelect.innerHTML = ''; // 기존 옵션 제거
+
+        const selectedDate = new Date(document.getElementById('reservationDateList').value);
+        const today = new Date();
+
+        // 오늘 날짜와 선택된 날짜 비교
+        const isToday = selectedDate.toISOString().slice(0, 10) === today.toISOString().slice(0, 10);
+
+        // 현재 시간 가져오기
+        const currentHour = today.getHours();
+        const currentMinute = today.getMinutes();
+
+        hours.forEach(time => {
+          const [hour, minute] = time.split(':').map(Number);
+
+          // 오늘인 경우, 현재 시간 이후의 예약 시간만 추가
+          if (isToday) {
+            // 현재 시간이 더 작거나 같으면 그 시간 이후의 예약 가능
+            if (hour > currentHour || (hour === currentHour && minute >= 15)) { // 15분 이후로 수정
+              const option = document.createElement('option');
+              option.value = time;
+              option.textContent = time;
+              timeSelect.appendChild(option);
+            }
+          } else {
+            const option = document.createElement('option');
+            option.value = time;
+            option.textContent = time;
+            timeSelect.appendChild(option);
+          }
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        populateDateList();
+
+        const dateList = document.getElementById('reservationDateList');
+        dateList.addEventListener('change', function () {
+          const selectedDate = new Date(dateList.value);
+          const day = selectedDate.getDay();
+          const hours = (day === 6) ? saturdayHours : weekdayHours; // 토요일인지 확인
+          populateTimeSlots(hours);
+        });
+
+        const timeSelect = document.getElementById('reservationTime');
+        timeSelect.addEventListener('change', function () {
+          const selectedTime = timeSelect.options[timeSelect.selectedIndex].textContent;
+          const utterance = new SpeechSynthesisUtterance(`선택된 시간은 ${selectedTime} 입니다.`);
+          window.speechSynthesis.speak(utterance);
+        });
+      });
+    </script>
+
   </form>
 </div>
-<script>
-  // 진료 시간 로직 설정
-  const weekdayHours = [
-    "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45",
-    "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45",
-    "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45",
-    "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45"
-  ];
-
-  const saturdayHours = [
-    "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45",
-    "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45",
-    "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45"
-  ];
-
-  // jQuery UI Datepicker 적용
-  $(function() {
-    $("#reservationDate").datepicker({
-      dateFormat: "yy-mm-dd", // 날짜 형식
-      minDate: 0, // 오늘 이후 날짜만 선택 가능
-      beforeShowDay: function(date) {
-        var day = date.getDay();
-        // 주말 비활성화 (일요일)
-        return [day !== 0, ''];
-      },
-      onSelect: function(dateText) {
-        var date = new Date(dateText);
-        var day = date.getDay();
-        // 평일(월~금)인지 토요일인지에 따라 시간대 설정
-        var hours = (day === 6) ? saturdayHours : weekdayHours;
-        populateTimeSlots(hours);
-      }
-    });
-  });
-
-  // 시간대 선택 박스에 옵션 추가
-  function populateTimeSlots(hours) {
-    var timeSelect = document.getElementById('reservationTime');
-    timeSelect.innerHTML = ''; // 기존 옵션 제거
-    hours.forEach(time => {
-      var option = document.createElement('option');
-      option.value = time;
-      option.textContent = time;
-      timeSelect.appendChild(option);
-    });
-  }
-</script>
-
 </body>
 </html>
-

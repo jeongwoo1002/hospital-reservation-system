@@ -15,7 +15,7 @@
     </label>
 
     <label for="name">이름
-      <input type="text" name="name" id="name" placeholder="이름" th:value="${user.name}" required>
+      <input type="text" name="name" id="name" placeholder="이름" th:value="${user.name}" readonly>
     </label>
 
     <label for="number">전화번호
@@ -23,7 +23,7 @@
     </label>
 
     <label for="resident">주민번호
-      <input type="text" name="resident" id="resident" placeholder="주민번호" th:value="${user.resident}" required>
+      <input type="text" name="resident" id="resident" placeholder="주민번호" th:value="${user.resident}" readonly>
     </label>
 
     <label for="address">주소
@@ -33,6 +33,38 @@
     <button id="btn-update" type="submit">회원수정</button>
   </form>
 </div>
-<script th:src="@{/js/user.js}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // 각 필드 포커스 시 음성 안내
+    document.getElementById("password").addEventListener("focus", function() {
+      speak("비밀번호를 변경하려면 비밀번호를 입력해주세요.");
+    });
+
+    document.getElementById("name").addEventListener("focus", function() {
+      speak("이름: " + this.value);
+    });
+
+    document.getElementById("number").addEventListener("focus", function() {
+      speak("전화번호를 입력하세요.");
+    });
+
+    document.getElementById("resident").addEventListener("focus", function() {
+      speak("주민번호: " + this.value);
+    });
+
+    document.getElementById("address").addEventListener("focus", function() {
+      speak("주소를 입력하세요.");
+    });
+
+    document.getElementById("btn-update").addEventListener("focus", function() {
+      speak("회원수정 버튼입니다. 회원 정보를 수정하시겠습니까?");
+    });
+  });
+</script>
 </body>
 </html>

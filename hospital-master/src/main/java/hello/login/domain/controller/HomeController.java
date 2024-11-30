@@ -1,18 +1,3 @@
-//package hello.login.domain.controller;
-//
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.GetMapping;
-//
-//@Controller
-//@Slf4j
-//public class HomeController {
-//
-//        @GetMapping("/")
-//        public String Home() {
-//            return "home";
-//        }
-//}
 package hello.login.domain.controller;
 
 import hello.login.domain.model.Ophthalmology;

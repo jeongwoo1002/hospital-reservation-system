@@ -66,5 +66,43 @@
 
 </div> <!--container-->
 <script src="/js/board.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // 음성 안내 함수
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // 페이지가 로드될 때 게시글 정보 안내
+    const boardId = document.getElementById('id').textContent.trim();
+    const boardAuthor = document.querySelector('span > i').textContent.trim();
+    const boardTitle = document.querySelector('input[th\\:field="*{title}"]').value.trim();
+    const boardContent = document.querySelector('textarea[th\\:field="*{content}"]').value.trim();
+
+    // 페이지 로드 후 음성으로 안내
+    const message = `글번호: ${boardId}, 작성자: ${boardAuthor}, 제목: ${boardTitle}, 내용: ${boardContent}`;
+    speak(message);
+
+    // 댓글을 추가할 때 음성 안내 추가 (등록 버튼에 이벤트 리스너 추가)
+    document.getElementById('btn-reply-save').addEventListener('click', function() {
+      const replyContent = document.getElementById('reply-content').value.trim();
+      if (replyContent) {
+        speak(`댓글이 추가되었습니다: ${replyContent}`);
+      } else {
+        speak('댓글 내용을 입력해주세요.');
+      }
+    });
+
+    // S 키로 음성 멈추기
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 's') {
+        window.speechSynthesis.cancel(); // 음성 합성 중지
+      }
+    });
+  });
+</script>
+
 </body>
 </html>

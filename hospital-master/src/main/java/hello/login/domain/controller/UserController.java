@@ -4,13 +4,11 @@ import hello.login.domain.config.auth.PrincipalDetail;
 import hello.login.domain.dto.LoginForm;
 import hello.login.domain.dto.UserDto;
 import hello.login.domain.model.Reservation;
-import hello.login.domain.model.User;
 import hello.login.domain.repository.UserRepository;
 import hello.login.domain.service.ReservationService;
 import hello.login.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -64,7 +62,7 @@ public class UserController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "회원 수정에 실패했습니다: " + e.getMessage());
         }
-        return "redirect:/user/info"; // 수정 후 이동할 페이지
+        return "redirect:/user/userInfo"; // 수정 후 이동할 페이지
     }
 
     /**

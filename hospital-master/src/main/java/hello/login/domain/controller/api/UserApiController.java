@@ -2,13 +2,11 @@ package hello.login.domain.controller.api;
 
 import hello.login.domain.dto.ResponseDto;
 import hello.login.domain.dto.UserDto;
-import hello.login.domain.model.User;
 import hello.login.domain.repository.UserRepository;
 import hello.login.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

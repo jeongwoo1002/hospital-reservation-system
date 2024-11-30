@@ -3,12 +3,15 @@ package hello.login.domain.controller.api;
 import hello.login.domain.dto.ReservationForm;
 import hello.login.domain.model.Reservation;
 import hello.login.domain.model.User;
+import hello.login.domain.repository.UserRepository;
 import hello.login.domain.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,13 +20,16 @@ import java.util.List;
 public class ReservationApiController {
 
     private final ReservationService reservationService;
+    private final UserRepository userRepository;
 
     // 예약 생성
-    @PostMapping
-    public ResponseEntity<String> createReservation(@RequestBody ReservationForm reservationForm, HttpSession session) {
-        User user = (User) session.getAttribute("user"); // 세션에서 사용자 가져오기
-        reservationService.save(reservationForm, user);
-        return ResponseEntity.ok("예약이 성공적으로 생성되었습니다.");
+    @PostMapping("/reservations")
+    public ResponseEntity<Reservation> createReservation(@RequestBody ReservationForm reservationForm, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Reservation reservation = reservationService.createReservation(reservationForm, user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
     }
 
     // 예약 수정

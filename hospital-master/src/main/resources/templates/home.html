@@ -35,37 +35,81 @@
         document.addEventListener("DOMContentLoaded", function() {
             getLocation();
 
-            // 추가된 JavaScript 코드
-            const synth = window.speechSynthesis;
+            // 음성 안내 함수
+            function speak(text) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // 페이지 로드 시 안내 음성
+            speak("안녕하세요, 여기는 안과 병원 목록 페이지입니다.");
+            speak("이 페이지에서 다음과 같은 키를 사용하여 탐색할 수 있습니다: Tab으로 항목 간 이동, A로 선택된 병원 소리 안내, S로 소리 멈춤, Enter로 선택한 항목 클릭, D로 병원 상세페이지에서 예약하기 버튼 클릭.");
+
+            // 주소 입력 필드에 포커스 시 안내
+            const addressInput = document.querySelector("input[name='keyword']");
+            addressInput.addEventListener('focus', function() {
+                speak("주소를 입력하세요.");
+            });
+// 병원 정보 안내를 위한 이벤트
             const tabs = document.querySelectorAll('[role="tab"]');
+            let isSpeaking = false; // 소리 재생 여부
 
             tabs.forEach(tab => {
                 tab.addEventListener('keydown', function(event) {
-                    console.log(`Key pressed: ${event.key}`);
-
-                    if (event.key === 'Tab') {
-                        event.preventDefault();
-                        const index = Array.from(tabs).indexOf(tab);
-                        let nextTab;
-                        if (event.shiftKey) {
-                            nextTab = tabs[index - 1] || tabs[tabs.length - 1];
-                        } else {
-                            nextTab = tabs[index + 1] || tabs[0];
-                        }
-                        nextTab.focus();
-                    }
-
-                    if (event.key === 'a') {
-                        event.preventDefault();
-                        console.log('A key pressed');
-                        const textToRead = tab.textContent.trim();
-                        const utterance = new SpeechSynthesisUtterance(textToRead);
-                        synth.speak(utterance);
-                    }
-
                     if (event.key === 'Enter') {
                         event.preventDefault();
                         tab.click();
+                    }
+                });
+
+                // 병원 탭 선택 시만 병원 정보 읽어주기
+                tab.addEventListener('keypress', function(event) {
+                    if (event.key === 'a') {
+                        event.preventDefault();
+                        const hospitalName = tab.textContent.trim();
+                        const hospitalAddress = tab.getAttribute('data-address');
+                        const hospitalNumber = tab.getAttribute('data-number');
+
+                        // 병원 정보만 소리로 안내
+                        if (hospitalName && hospitalAddress && hospitalNumber) {
+                            const message = `병원 이름: ${hospitalName}, 주소: ${hospitalAddress}, 전화번호: ${hospitalNumber}`;
+                            console.log(`안내할 메시지: ${message}`); // 로그 추가
+                            speak(message);
+                            isSpeaking = true;
+                        } else {
+                            // 병원 정보가 없으면 안내하지 않음
+                            speak(hospitalName);
+                        }
+                    }
+                });
+            });
+
+            // 소리 멈추기 기능
+            document.addEventListener('keypress', function(event) {
+                if (event.key === 's') {
+                    event.preventDefault();
+                    if (isSpeaking) {
+                        window.speechSynthesis.cancel(); // 음성 멈춤
+                        isSpeaking = false;
+                    }
+                }
+            });
+
+            // 기본적인 항목 읽기 처리
+            const basicLinks = document.querySelectorAll("a[role='menuitem']");
+            basicLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    speak(link.textContent.trim());
+                });
+            });
+
+            // 로그인 버튼 안내
+            const loginButton = document.querySelector("#loginButton"); // 로그인 버튼 ID로 선택
+            loginButton.addEventListener('focus', function() {
+                loginButton.addEventListener('keypress', function(event) {
+                    if (event.key === 'a') {
+                        event.preventDefault();
+                        speak("로그인");
                     }
                 });
             });
@@ -80,6 +124,18 @@
 
 <div class="container">
     <h3 class="text-center">안과 병원 목록</h3>
+
+    <div class="accessibility-instructions">
+        <h4>접근성 안내</h4>
+        <p>이 페이지에서 다음과 같은 키를 사용하여 탐색할 수 있습니다:</p>
+        <ul>
+            <li><strong>Tab</strong>: 항목 간 이동</li>
+            <li><strong>A</strong>: 선택된 병원 소리 안내</li>
+            <li><strong>S</strong>: 소리 멈춤</li>
+            <li><strong>Enter</strong>: 선택한 항목 클릭</li>
+            <li><strong>D</strong>: 병원 상세페이지에서 예약하기</li>
+        </ul>
+    </div>
 
     <form action="/" method="get" class="form-inline mb-3">
         <input type="text" name="keyword" class="form-control mr-sm-2" placeholder="주소로 검색" th:value="${keyword}">
@@ -96,9 +152,10 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="ophthalmology, i : ${ophthalmologyPage.content}">
+        <tr th:each="ophthalmology, i : ${ophthalmologyPage.content}" role="tab">
             <td th:text="${i.index + 1 + (ophthalmologyPage.pageable.pageSize * ophthalmologyPage.pageable.pageNumber)}"></td>
-            <td><a role="tab" tabindex="0" th:text="${ophthalmology.name}" th:href="@{/ophthalmology/detail/{id}(id=${ophthalmology.id})}"></a></td>
+            <td><a role="tab" tabindex="0" th:text="${ophthalmology.name}" th:href="@{/ophthalmology/detail/{id}(id=${ophthalmology.id})}"
+                   th:attr="data-address=${ophthalmology.address}, data-number=${ophthalmology.number}"></a></td>
             <td th:text="${ophthalmology.address}"></td>
             <td th:text="${ophthalmology.number}"></td>
         </tr>

@@ -26,6 +26,7 @@ public class Reservation {
     @JoinColumn(name = "ophthalmology_id", nullable = false)
     private Ophthalmology ophthalmology;  // 안과와의 관계 설정 (Ophthalmology 엔티티와 연관)
 
+
     /**
      * 예약 가능한 시간인지 확인하는 메서드
      * 점심 시간 (13:00~14:00), 평일(09:00~18:00) 외, 토요일(09:00~15:00) 외 시간은 예약 불가
@@ -52,17 +53,6 @@ public class Reservation {
         reservation.setOphthalmology(ophthalmology);
         return reservation;
     }
-//    // 예약 생성 메서드
-//    public static Reservation createReservation(String patientName, String contactNumber, LocalDate reservationDate, LocalTime reservationTime, User user, Ophthalmology ophthalmology) {
-//        Reservation reservation = new Reservation();
-//        reservation.setPatientName(patientName);
-//        reservation.setContactNumber(contactNumber);
-//        reservation.setReservationDate(reservationDate);
-//        reservation.setReservationTime(reservationTime);
-//        reservation.setUser(user);
-//        reservation.setOphthalmology(ophthalmology);
-//        return reservation;
-//    }
 
     // 예약 수정 메서드
     public void updateReservation(LocalDate reservationDate, LocalTime reservationTime, Ophthalmology ophthalmology) {
@@ -70,5 +60,9 @@ public class Reservation {
         this.reservationTime = reservationTime;
         this.ophthalmology = ophthalmology;
     }
+
+
+
+
 }
 
